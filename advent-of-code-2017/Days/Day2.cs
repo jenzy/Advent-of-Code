@@ -18,8 +18,8 @@ namespace AdventOfCode2017.Days
             int sum = ParseInput(input)
                 .Select(row => (from a in row
                                 from b in row
-                                where a % b == 0
-                                select a / b).Max())
+                                where a > b && a % b == 0
+                                select a / b).First())
                 .Sum();
 
             Console.WriteLine("Result: " + sum);
