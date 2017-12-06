@@ -7,7 +7,7 @@ namespace AdventOfCode2017
     {
         private static void Main()
         {
-            var day = 5;
+            var day = 6;
 
             try
             {
