@@ -14,32 +14,28 @@ namespace AdventOfCode2017.Days
 
         public void Part2(string input)
         {
-            var first = ParseInput(input);
+            int result;
+            var node = ParseInput(input);
 
-            Prog node = first;
             while (true)
             {
                 var weights = node.Others.GroupBy(o => o.TotalWeight).ToList();
                 if (weights.Count == 1)
-                {
                     throw new Exception("all equal");
-                }
-                else
+
+                var different = weights.Single(w => w.Count() == 1).First();
+                var differentWeights = different.Others.GroupBy(o => o.TotalWeight).ToList();
+                if (differentWeights.Count == 1)
                 {
-                    var odd = weights.Single(w => w.Count() == 1).First();
-                    var oddWeights = odd.Others.GroupBy(o => o.TotalWeight).ToList();
-                    if (oddWeights.Count == 1)
-                    {
-                        var goods = weights.Single(w => w.Count() > 1).First();
-                        Console.WriteLine(goods.TotalWeight - odd.Others.Sum(p => p.TotalWeight));
-                        return;
-                    }
-                    else
-                    {
-                        node = odd;
-                    }
+                    var okProgs = weights.Single(w => w.Count() > 1).First();
+                    result = okProgs.TotalWeight - different.Others.Sum(p => p.TotalWeight);
+                    break;
                 }
+
+                node = different;
             }
+
+            Console.WriteLine("Result: " + result);
         }
 
         private static Prog ParseInput(string input)
@@ -63,30 +59,15 @@ namespace AdventOfCode2017.Days
         {
             private int? totalWeight;
 
-            public int Weight { get; set; }
+            private int Weight { get; }
 
-            //public int TotalWeight { get; set; }
+            public int TotalWeight => (int) (totalWeight ?? (totalWeight = Weight + (Others?.Sum(p => p.TotalWeight) ?? 0)));
 
-            public int TotalWeight
-            {
-                get
-                {
-                    if (totalWeight == null)
-                    {
-                        totalWeight = Weight + (Others?.Sum(p => p.TotalWeight) ?? 0);
-                    }
-
-                    return totalWeight ?? 0;
-                }
-            }
-
-            public string Name { get; set; }
+            public string Name { get; }
 
             public List<Prog> Others { get; set; }
 
-            public List<string> OthersNames { get; set; }
-
-            public string Input { get; set; }
+            public List<string> OthersNames { get; }
 
             public Prog(string input)
             {
