@@ -8,51 +8,77 @@ namespace AdventOfCode2017.Days
     {
         public void Part1(string input)
         {
-//            input = @"pbga (66)
-//xhth (57)
-//ebii (61)
-//havc (66)
-//ktlj (57)
-//fwft (72) -> ktlj, cntj, xhth
-//qoyq (66)
-//padx (45) -> pbga, havc, qoyq
-//tknk (41) -> ugml, padx, fwft
-//jptl (61)
-//ugml (68) -> gyxo, ebii, jptl
-//gyxo (61)
-//cntj (57)";
+            var first = ParseInput(input);
+            Console.WriteLine("Result: " + first.Name);
+        }
 
-            var all = ParseInput(input);
+        public void Part2(string input)
+        {
+            var first = ParseInput(input);
+
+            Prog node = first;
+            while (true)
+            {
+                var weights = node.Others.GroupBy(o => o.TotalWeight).ToList();
+                if (weights.Count == 1)
+                {
+                    throw new Exception("all equal");
+                }
+                else
+                {
+                    var odd = weights.Single(w => w.Count() == 1).First();
+                    var oddWeights = odd.Others.GroupBy(o => o.TotalWeight).ToList();
+                    if (oddWeights.Count == 1)
+                    {
+                        var goods = weights.Single(w => w.Count() > 1).First();
+                        Console.WriteLine(goods.TotalWeight - odd.Others.Sum(p => p.TotalWeight));
+                        return;
+                    }
+                    else
+                    {
+                        node = odd;
+                    }
+                }
+            }
+        }
+
+        private static Prog ParseInput(string input)
+        {
+            var all = input.Split('\n')
+                           .Select(i => new Prog(i))
+                           .ToDictionary(p => p.Name);
+
+            foreach (var prog in all.Values.Where(p => p.OthersNames != null))
+                prog.Others = prog.OthersNames.Select(n => all[n]).ToList();
 
             var notFirst = all.Values
                               .Where(p => p.OthersNames != null)
                               .SelectMany(p => p.OthersNames)
                               .ToHashSet();
 
-            var first = all.Values
-                           .First(p => p.OthersNames != null && !notFirst.Contains(p.Name));
-
-
-            Console.WriteLine("Result: " + first.Name);
+            return all.Values.Single(p => p.OthersNames != null && !notFirst.Contains(p.Name));
         }
 
-        public void Part2(string input)
+        private class Prog
         {
-            //Console.WriteLine("Result: " + result);
-        }
+            private int? totalWeight;
 
-        private static Dictionary<string, Prog> ParseInput(string input)
-        {
-            var all = input.Split('\n')
-                           .Select(i => new Prog(i))
-                           .ToDictionary(p => p.Name);
-
-            return all;
-        }
-
-        class Prog
-        {
             public int Weight { get; set; }
+
+            //public int TotalWeight { get; set; }
+
+            public int TotalWeight
+            {
+                get
+                {
+                    if (totalWeight == null)
+                    {
+                        totalWeight = Weight + (Others?.Sum(p => p.TotalWeight) ?? 0);
+                    }
+
+                    return totalWeight ?? 0;
+                }
+            }
 
             public string Name { get; set; }
 
@@ -69,7 +95,8 @@ namespace AdventOfCode2017.Days
                 Name = input.Substring(0, iParenL).Trim();
                 Weight = int.Parse(input.Substring(iParenL+1, iParenR - iParenL - 1).Trim());
                 var iArrow = input.IndexOf(">", StringComparison.InvariantCulture);
-                OthersNames = input.Substring(iArrow + 1).Split(',').Select(x => x.Trim()).ToList();
+                if (iArrow > 0)
+                    OthersNames = input.Substring(iArrow + 1).Split(',').Select(x => x.Trim()).ToList();
             }
         }
 
