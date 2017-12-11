@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using static System.Math;
 
 namespace AdventOfCode2017.Days
 {
@@ -9,103 +10,51 @@ namespace AdventOfCode2017.Days
         {
             var directions = input.Split(",").Select(s => s.Trim()).ToList();
 
-            int x = 0, y = 0;
+            var coord = directions.Aggregate((x: 0, y: 0), Move);
 
-            foreach (var direction in directions)
-            {
-                switch (direction)
-                {
-                    case "n":
-                        y++;
-                        break;
-
-                    case "s":
-                        y--;
-                        break;
-
-                    case "ne":
-                        x++;
-                        break;
-
-                    case "sw":
-                        x--;
-                        break;
-
-                    case "se":
-                        x++;
-                        y--;
-                        break;
-
-                    case "nw":
-                        x--;
-                        y++;
-                        break;
-                }
-            }
-
-            var dx = x - 0;
-            var dy = y - 0;
-
-            int dist = 0;
-            if (Math.Sign(dx) == Math.Sign(dy))
-                dist = Math.Abs(dx + dy);
-            else
-                dist = Math.Max(Math.Abs(dx), Math.Abs(dy));
-
-            Console.WriteLine("Result: " + dist);
+            Console.WriteLine("Result: " + Distance(coord));
         }
 
         public void Part2(string input)
         {
             var directions = input.Split(",").Select(s => s.Trim()).ToList();
 
-            int x = 0, y = 0, dist = 0;
+            int dist = 0;
+            var coord = (x:0, y:0);
 
             foreach (var direction in directions)
             {
-                switch (direction)
-                {
-                    case "n":
-                        y++;
-                        break;
-
-                    case "s":
-                        y--;
-                        break;
-
-                    case "ne":
-                        x++;
-                        break;
-
-                    case "sw":
-                        x--;
-                        break;
-
-                    case "se":
-                        x++;
-                        y--;
-                        break;
-
-                    case "nw":
-                        x--;
-                        y++;
-                        break;
-                }
-
-                dist = Math.Max(dist, distance(x, y));
+                coord = Move(coord, direction);
+                dist = Max(dist, Distance(coord));
             }
 
             Console.WriteLine("Result: " + dist);
         }
 
-        public static int distance(int x, int y)
+        private static (int x, int y) Move((int x, int y) coord, string direction)
         {
-            int dist = 0;
-            if (Math.Sign(x) == Math.Sign(y))
-                dist = Math.Abs(x + y);
-            else
-                dist = Math.Max(Math.Abs(x), Math.Abs(y));
-            return dist;
+            switch (direction)
+            {
+                case "n":
+                    return (coord.x, coord.y + 1);
+                case "s":
+                    return (coord.x, coord.y - 1);
+                case "ne":
+                    return (coord.x + 1, coord.y);
+                case "sw":
+                    return (coord.x - 1, coord.y);
+                case "se":
+                    return (coord.x + 1, coord.y - 1);
+                case "nw":
+                    return (coord.x - 1, coord.y + 1);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(direction));
+            }
         }
+
+        private static int Distance((int x, int y) coord) =>
+            Sign(coord.x) == Sign(coord.y) 
+            ? Abs(coord.x + coord.y) 
+            : Max(Abs(coord.x), Abs(coord.y));
     }
 }
