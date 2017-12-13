@@ -53,29 +53,29 @@ namespace AdventOfCode2017.Days
             foreach (var line in lines)
             {
                 var spl = line.Split("<->");
-                var node = new Node
-                {
-                    Id = int.Parse(spl[0].Trim()),
-                    NeighboursInts = spl[1].Split(',').Select(x => int.Parse(x.Trim())).ToList()
-                };
-                nodes[node.Id] = node;
-            }
+                int id = int.Parse(spl[0].Trim());
 
-            foreach (var node in nodes.Values)
-                node.Neighbours = node.NeighboursInts.Select(i => nodes[i]).ToList();
+                if (!nodes.TryGetValue(id, out var node))
+                    nodes[id] = node = new Node(id);
+
+                node.Neighbours = spl[1].Split(',')
+                                        .Select(x => int.Parse(x.Trim()))
+                                        .Select(i => nodes.TryGetValue(i, out var n) ? n : (nodes[i] = new Node(i)))
+                                        .ToList();
+            }
 
             return nodes;
         }
 
-        class Node
+        private class Node
         {
-            public int Id { get; set; }
-
-            public List<int> NeighboursInts { get; set; }
+            public int Id { get; }
 
             public List<Node> Neighbours { get; set; }
 
             public bool Visited { get; set; }
+
+            public Node(int id) => Id = id;
         }
     }
 }
