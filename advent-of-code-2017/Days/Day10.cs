@@ -28,8 +28,14 @@ namespace AdventOfCode2017.Days
 
         public void Part2(string input)
         {
+            var hash = KnotHash(input);
+            Console.WriteLine("Result: " + hash);
+        }
+
+        public static string KnotHash(string input)
+        {
             var list = new CircularList();
-            var lengths = Encoding.ASCII.GetBytes(input).Concat(new byte[]{ 17, 31, 73, 47, 23 }).ToList();
+            var lengths = Encoding.ASCII.GetBytes(input).Concat(new byte[] { 17, 31, 73, 47, 23 }).ToList();
 
             int iCur = 0, skip = 0;
             for (int round = 0; round < 64; round++)
@@ -49,7 +55,7 @@ namespace AdventOfCode2017.Days
             for (int i = 0; i < 16; i++)
                 hash += list.GetRange(i * 16, 16).Aggregate(0, (a, b) => a ^ b).ToString("x2");
 
-            Console.WriteLine("Result: " + hash);
+            return hash;
         }
 
         private class CircularList
