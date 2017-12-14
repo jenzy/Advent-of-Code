@@ -27,7 +27,6 @@ namespace AdventOfCode2017.Days
 
         public void Part2(string input)
         {
-            input = "flqrgnkx";
             var grid = new List<List<bool>>();
             for (int row = 0; row < 128; row++)
             {
@@ -36,7 +35,7 @@ namespace AdventOfCode2017.Days
                 for (int i = 0; i < hash.Length; i += 2)
                 {
                     var aa = byte.Parse(hash.Substring(i, 2), NumberStyles.HexNumber);
-                    var b = new BitArray(new []{aa}).Cast<bool>().Select(b1 => !b1).ToList();
+                    var b = new BitArray(new []{aa}).Cast<bool>().Reverse().Select(b1 => b1).ToList();
                     if (b.Count != 8)
                         throw new Exception();
 
