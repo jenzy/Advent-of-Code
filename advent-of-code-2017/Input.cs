@@ -5750,5 +5750,7 @@ afu dec 990 if wfk < -1202";
 84: 14
 90: 20
 92: 14";
+
+        public const string Day14 = @"jzgqcdpd";
     }
 }
