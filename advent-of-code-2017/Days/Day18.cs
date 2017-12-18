@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace AdventOfCode2017.Days
 {
@@ -9,113 +8,80 @@ namespace AdventOfCode2017.Days
     {
         public void Part1(string input)
         {
-            var commands = input.Split('\n').Select(x => x.Trim()).ToList();
-
-            var p0 = new Prog(commands, null);
+            var p0 = new Prog(Parse(input).ToList(), new Dictionary<string, long>());
             p0.Run();
 
-            Console.WriteLine("Result: " + p0.result);
+            Console.WriteLine("Result: " + p0.ResultPart1);
         }
 
         public void Part2(string input)
         {
-            var commands = input.Split('\n').Select(x => x.Trim()).ToList();
-
+            var commands = Parse(input).ToList();
             Queue<long> q0 = new Queue<long>(), q1 = new Queue<long>();
-            var p0 = new Prog(commands, 0, q0, q1);
-            var p1 = new Prog(commands, 1, q1, q0);
+            var p0 = new Prog(commands, new Dictionary<string, long> { ["p"] = 0 }, q0, q1);
+            var p1 = new Prog(commands, new Dictionary<string, long> { ["p"] = 1 }, q1, q0);
 
-            int blckCount = 0;
             while (true)
             {
                 p0.Run();
-
                 p1.Run();
 
-
-                if (p0.Blocked && p1.Blocked)
-                {
-                    blckCount++;
-                    if (p0.BlcCount > 10 && p1.BlcCount > 10)
-                        break;
-                }
-                else
-                {
-                    blckCount = 0;
-                }
-
-                if (p0.Terminated && p1.Blocked)
-                    break;
-
-                if (p1.Terminated && p0.Blocked)
-                    break;
-
-                if (p0.Terminated && p1.Terminated)
+                if ((p0.BlockedCount > 1 && p1.BlockedCount > 1)
+                    || (p0.Terminated && (p1.Terminated || p1.BlockedCount > 0))
+                    || (p1.Terminated && (p0.Terminated || p0.BlockedCount > 0)))
                     break;
             }
 
-            Console.WriteLine("Result: " + p1.sndCount);
+            Console.WriteLine("Result: " + p1.ResultPart2);
         }
 
+        private static IEnumerable<string> Parse(string input) => input.Split('\n').Select(x => x.Trim());
 
-        class Prog
+        private class Prog
         {
             private readonly List<string> commands;
-            private readonly int? id;
             private readonly Dictionary<string, long> reg;
             private readonly Queue<long> myQueue;
             private readonly Queue<long> otherQueue;
             private long lastFreq;
-            public long? result = null;
-            private int i = 0;
-            public int sndCount = 0;
+            private int i;
 
-            public Prog(List<string> commands, int? id, Queue<long> myQueue = null, Queue<long> otherQueue = null)
+            public Prog(List<string> commands, Dictionary<string, long> reg, Queue<long> myQueue = null, Queue<long> otherQueue = null)
             {
                 this.commands = commands;
-                this.id = id;
                 this.myQueue = myQueue;
                 this.otherQueue = otherQueue;
-                this.reg = new Dictionary<string, long>();
-                if (id > 0)
-                    reg["p"] = id.Value;
+                this.reg = reg;
             }
 
-            public bool Blocked { get; set; }
+            public long? ResultPart1 { get; private set; }
 
-            public int BlcCount { get; set; }
+            public int ResultPart2 { get; private set; }
 
-            public bool Terminated { get; set; }
+            public int BlockedCount { get; private set; }
+
+            public bool Terminated { get; private set; }
 
             public void Run()
             {
-                if (Terminated)
-                    return;
-
-                while (true)
+                while (!Terminated)
                 {
-                    if (i < 0 && i >= commands.Count)
-                    {
-                        Terminated = true;
-                        break;
-                    }
-
                     i += Process(commands[i]);
-                    if (id == null && result != null)
+
+                    if (BlockedCount > 0)
                         break;
 
-                    if (Blocked)
-                        break;
+                    if ((i < 0 && i >= commands.Count) || (myQueue == null && ResultPart1 != null))
+                        Terminated = true;
                 }
             }
-
 
             private int Process(string command)
             {
                 if (command.StartsWith("snd"))
                 {
-                    var val = GetValue(command.Substring(4));
-                    sndCount++;
+                    ResultPart2++;
+                    long val = GetValue(command.Substring(4));
                     if (otherQueue != null)
                         otherQueue.Enqueue(val);
                     else
@@ -129,35 +95,36 @@ namespace AdventOfCode2017.Days
                 else if (command.StartsWith("add"))
                 {
                     var arg = command.Substring(4).Split(' ');
-                    reg[arg[0]] = GetReg(arg[0]) + GetValue(arg[1]);
+                    reg[arg[0]] = GetRegister(arg[0]) + GetValue(arg[1]);
                 }
                 else if (command.StartsWith("mul"))
                 {
                     var arg = command.Substring(4).Split(' ');
-                    reg[arg[0]] = GetReg(arg[0]) * GetValue(arg[1]);
+                    reg[arg[0]] = GetRegister(arg[0]) * GetValue(arg[1]);
                 }
                 else if (command.StartsWith("mod"))
                 {
                     var arg = command.Substring(4).Split(' ');
-                    reg[arg[0]] = GetReg(arg[0]) % GetValue(arg[1]);
+                    reg[arg[0]] = GetRegister(arg[0]) % GetValue(arg[1]);
                 }
                 else if (command.StartsWith("rcv"))
                 {
                     var arg = command.Substring(4);
-                    if (myQueue != null)
+                    if (myQueue == null)
                     {
-                        Blocked = false;
-                        if (!myQueue.TryDequeue(out var val))
+                        if (GetValue(arg) != 0)
+                            ResultPart1 = lastFreq;
+                    }
+                    else
+                    {
+                        if (!myQueue.TryDequeue(out long val))
                         {
-                            Blocked = true;
-                            BlcCount++;
+                            BlockedCount++;
                             return 0;
                         }
-                        BlcCount = 0;
+                        BlockedCount = 0;
                         reg[arg] = val;
                     }
-                    else if (GetValue(arg) != 0)
-                        result = lastFreq;
                 }
                 else if (command.StartsWith("jgz"))
                 {
@@ -169,19 +136,9 @@ namespace AdventOfCode2017.Days
                 return 1;
             }
 
-            private long GetValue(string str)
-            {
-                return long.TryParse(str, out long val) ? val : GetReg(str);
-            }
+            private long GetValue(string str) => long.TryParse(str, out long val) ? val : GetRegister(str);
 
-
-            private long GetReg(string str)
-            {
-                if (!reg.TryGetValue(str, out long val))
-                    reg[str] = val = 0;
-
-                return val;
-            }
+            private long GetRegister(string str) => reg.TryGetValue(str, out long val) ? val : (reg[str] = 0);
         }
     }
 }

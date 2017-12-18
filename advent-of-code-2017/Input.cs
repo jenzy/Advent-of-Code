@@ -5800,5 +5800,19 @@ jgz i -11
 snd a
 jgz f -16
 jgz a -19";
+
+        public const string Day19 = @"";
+
+        public const string Day20 = @"";
+
+        public const string Day21 = @"";
+
+        public const string Day22 = @"";
+
+        public const string Day23 = @"";
+
+        public const string Day24 = @"";
+
+        public const string Day25 = @"";
     }
 }
