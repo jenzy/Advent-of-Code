@@ -112,7 +112,7 @@ namespace AdventOfCode2017.Days
             var neigbours = (from dx in Enumerable.Range(-1, 3)
                              from dy in Enumerable.Range(-1, 3)
                              where dx != 0 || dy != 0
-                             select (dx, dy)).ToList();
+                             select (dx: dx, dy: dy)).ToList();
 
             var grid = new Dictionary<(int x, int y), int> { [(0, 0)] = 1 };
             int GetGridSum((int x, int y) c) => neigbours.Sum(n => grid.TryGetValue((c.x + n.dx, c.y + n.dy), out var num) ? num : 0);
