@@ -1,117 +1,92 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 
 namespace AdventOfCode2017.Days
 {
     internal class Day19 : IDay
     {
-        enum Direction
-        {
-            Up, Down, Left, Right
-        }
+        private enum Direction { Up, Down, Left, Right }
 
-        string[] grid;
-        private (int x, int y) coord;
-        private Direction direction = Direction.Down;
-        private string collected = "";
-        private int stepCount = 0;
+        private string resultPart1 = "";
+        private int resultPart2;
 
         public void Part1(string input)
         {
-            grid = input.Split('\n').Select(x => x.TrimEnd('\r')).ToArray();
-            coord.x = grid[0].IndexOf('|');
-
-            bool ended = false;
-            while (!ended)
-            {
-                ended = Move();
-            }
-
-            Console.WriteLine("Result: " + collected);
+            Solve(input);
+            Console.WriteLine("Result: " + resultPart1);
         }
 
         public void Part2(string input)
         {
-            grid = input.Split('\n').Select(x => x.TrimEnd('\r')).ToArray();
-            coord.x = grid[0].IndexOf('|');
-            coord.y = 0;
-            stepCount = 1;
+            Console.WriteLine("Result: " + resultPart2);
+        }
+
+        private void Solve(string input)
+        {
+            var grid = input.Split('\n').Select(x => x.TrimEnd('\r')).ToArray();
+            var coord = (x: grid[0].IndexOf('|'), y: 0);
+            var direction = Direction.Down;
 
             bool ended = false;
             while (!ended)
-            {
                 ended = Move();
-            }
 
-            Console.WriteLine("Result: " + stepCount);
-        }
-
-        private bool Move()
-        {
-            var nc = MoveCoords(coord, direction);
-            var curChar = grid[coord.y][coord.x];
-
-            var nextChar = nc.y < 0 || nc.y >= grid.Length || nc.x < 0 || nc.x >= grid[nc.y].Length
-                               ? ' '
-                               : grid[nc.y][nc.x];
-
-            if (nextChar == ' ')
+            bool Move()
             {
-                if (curChar == '+')
+                var nc = StepInDirection(coord, direction);
+                var nextChar = nc.y < 0 || nc.y >= grid.Length || nc.x < 0 || nc.x >= grid[nc.y].Length ? ' ' : grid[nc.y][nc.x];
+
+                if (nextChar == ' ')
                 {
-                    var dirs = GetPossibleDirections();
-                    var nc1 = MoveCoords(coord, dirs.d1);
-                    if (grid[nc1.y][nc1.x] != ' ')
+                    if (grid[coord.y][coord.x] != '+')
+                        return true;
+
+                    foreach (var dir in GetPossibleDirections(direction))
                     {
-                        direction = dirs.d1;
-                        return false;
-                    }
-                    var nc2 = MoveCoords(coord, dirs.d2);
-                    if (grid[nc2.y][nc2.x] != ' ')
-                    {
-                        direction = dirs.d2;
-                        return false;
+                        var possibleCoord = StepInDirection(coord, dir);
+                        if (grid[possibleCoord.y][possibleCoord.x] != ' ')
+                        {
+                            direction = dir;
+                            return false;
+                        }
                     }
 
                     throw new Exception("what");
                 }
-                else
-                {
-                    return true;
-                }
-            }
-            else if (nextChar == '|' || nextChar == '-' || nextChar == '+')
-            {
-                coord = nc;
-                stepCount++;
-            }
-            else
-            {
-                collected += nextChar;
-                coord = nc;
-                stepCount++;
-            }
 
-            return false;
+                coord = nc;
+                resultPart2++;
+
+                if (nextChar != '|' && nextChar != '-' && nextChar != '+')
+                    resultPart1 += nextChar;
+
+                return false;
+            }
         }
 
-        private (Direction d1, Direction d2) GetPossibleDirections()
+        private static IEnumerable<Direction> GetPossibleDirections(Direction dir)
         {
-            switch (direction)
+            switch (dir)
             {
                 case Direction.Up:
                 case Direction.Down:
-                    return (Direction.Left, Direction.Right);
+                    yield return Direction.Left;
+                    yield return Direction.Right;
+                    break;
+
                 case Direction.Left:
                 case Direction.Right:
-                    return (Direction.Up, Direction.Down);
+                    yield return Direction.Up;
+                    yield return Direction.Down;
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static (int x, int y) MoveCoords((int x, int y) coord, Direction dir)
+        private static (int x, int y) StepInDirection((int x, int y) coord, Direction dir)
         {
             switch (dir)
             {
@@ -127,9 +102,5 @@ namespace AdventOfCode2017.Days
                     throw new ArgumentOutOfRangeException(nameof(dir), dir, null);
             }
         }
-
-        private static int Common(string input, int offset) =>
-            input.Where((cur, i) => cur == input[(i + offset) % input.Length])
-                 .Sum(t => (int) char.GetNumericValue(t));
     }
 }
