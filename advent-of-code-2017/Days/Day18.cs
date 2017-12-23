@@ -32,12 +32,12 @@ namespace AdventOfCode2017.Days
                     break;
             }
 
-            Console.WriteLine("Result: " + p1.ResultPart2);
+            Console.WriteLine("Result: " + p1.CountSnd);
         }
 
-        private static IEnumerable<string> Parse(string input) => input.Split('\n').Select(x => x.Trim());
+        public static IEnumerable<string> Parse(string input) => input.Split('\n').Select(x => x.Trim());
 
-        private class Prog
+        public class Prog
         {
             private readonly List<string> commands;
             private readonly Dictionary<string, long> reg;
@@ -56,7 +56,9 @@ namespace AdventOfCode2017.Days
 
             public long? ResultPart1 { get; private set; }
 
-            public int ResultPart2 { get; private set; }
+            public int CountSnd { get; private set; }
+
+            public int CountMul { get; private set; }
 
             public int BlockedCount { get; private set; }
 
@@ -71,7 +73,7 @@ namespace AdventOfCode2017.Days
                     if (BlockedCount > 0)
                         break;
 
-                    if ((i < 0 && i >= commands.Count) || (myQueue == null && ResultPart1 != null))
+                    if (i < 0 || i >= commands.Count || (myQueue == null && ResultPart1 != null))
                         Terminated = true;
                 }
             }
@@ -80,7 +82,7 @@ namespace AdventOfCode2017.Days
             {
                 if (command.StartsWith("snd"))
                 {
-                    ResultPart2++;
+                    CountSnd++;
                     long val = GetValue(command.Substring(4));
                     if (otherQueue != null)
                         otherQueue.Enqueue(val);
@@ -97,8 +99,14 @@ namespace AdventOfCode2017.Days
                     var arg = command.Substring(4).Split(' ');
                     reg[arg[0]] = GetRegister(arg[0]) + GetValue(arg[1]);
                 }
+                else if (command.StartsWith("sub"))
+                {
+                    var arg = command.Substring(4).Split(' ');
+                    reg[arg[0]] = GetRegister(arg[0]) - GetValue(arg[1]);
+                }
                 else if (command.StartsWith("mul"))
                 {
+                    CountMul++;
                     var arg = command.Substring(4).Split(' ');
                     reg[arg[0]] = GetRegister(arg[0]) * GetValue(arg[1]);
                 }
@@ -132,13 +140,19 @@ namespace AdventOfCode2017.Days
                     if (GetValue(arg[0]) > 0)
                         return (int)GetValue(arg[1]);
                 }
+                else if (command.StartsWith("jnz"))
+                {
+                    var arg = command.Substring(4).Split(' ');
+                    if (GetValue(arg[0]) != 0)
+                        return (int)GetValue(arg[1]);
+                }
 
                 return 1;
             }
 
             private long GetValue(string str) => long.TryParse(str, out long val) ? val : GetRegister(str);
 
-            private long GetRegister(string str) => reg.TryGetValue(str, out long val) ? val : (reg[str] = 0);
+            public long GetRegister(string str) => reg.TryGetValue(str, out long val) ? val : (reg[str] = 0);
         }
     }
 }
