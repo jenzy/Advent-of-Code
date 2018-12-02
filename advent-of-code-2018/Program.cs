@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using AdventOfCode2018.Days;
 
@@ -8,7 +9,7 @@ namespace AdventOfCode2018
     {
         private static void Main()
         {
-            var day = 1; //DateTime.Now.Day;
+            var day = DateTime.Now.Day;
 
             try
             {
@@ -24,7 +25,7 @@ namespace AdventOfCode2018
                 Console.WriteLine(e);
             }
 
-            if (System.Diagnostics.Debugger.IsAttached)
+            if (Debugger.IsAttached)
             {
                 Console.WriteLine("Press enter to exit.");
                 Console.ReadLine();
@@ -33,13 +34,21 @@ namespace AdventOfCode2018
 
         private static void RunDay(IDay day, string input)
         {
+            var sw = new Stopwatch();
+
             Console.WriteLine($"{day.GetType().Name}, {nameof(IDay.Part1)}");
+            sw.Start();
             var r1 = day.Part1(input);
+            sw.Stop();
             Console.WriteLine("Result: {0}\n", r1);
+            Console.WriteLine("Time: {0}\n", sw.Elapsed);
 
             Console.WriteLine($"{day.GetType().Name}, {nameof(IDay.Part2)}");
+            sw.Restart();
             var r2 = day.Part2(input);
+            sw.Stop();
             Console.WriteLine("Result: {0}\n", r2);
+            Console.WriteLine("Time: {0}\n", sw.Elapsed);
         }
     }
 }

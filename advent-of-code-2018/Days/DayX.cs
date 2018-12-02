@@ -2,6 +2,9 @@
 
 namespace AdventOfCode2018.Days
 {
+    /*
+
+     */
     internal class DayX : IDay
     {
         public string Part1(string input)
@@ -14,6 +17,11 @@ namespace AdventOfCode2018.Days
         {
             Console.WriteLine("TODO");
             return null;
+        }
+
+        private static object Parse(string input)
+        {
+            return input;
         }
     }
 }
