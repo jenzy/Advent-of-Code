@@ -4,14 +4,16 @@ namespace AdventOfCode2018.Days
 {
     internal class DayX : IDay
     {
-        public void Part1(string input)
+        public string Part1(string input)
         {
             Console.WriteLine("TODO");
+            return null;
         }
 
-        public void Part2(string input)
+        public string Part2(string input)
         {
             Console.WriteLine("TODO");
+            return null;
         }
     }
 }

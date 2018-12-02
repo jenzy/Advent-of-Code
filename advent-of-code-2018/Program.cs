@@ -4,16 +4,16 @@ using AdventOfCode2018.Days;
 
 namespace AdventOfCode2018
 {
-    static class Program
+    internal static class Program
     {
-        static void Main()
+        private static void Main()
         {
-            var day = DateTime.Now.Day;
+            var day = 1; //DateTime.Now.Day;
 
             try
             {
-                var inst = (IDay)Activator.CreateInstance(Type.GetType($"{typeof(DayX).Namespace}.Day{day}"));
-                var input = File.ReadAllText($"Inputs/Day{day}.txt");
+                var inst = (IDay)Activator.CreateInstance(Type.GetType($"{typeof(DayX).Namespace}.Day{day:0#}"));
+                var input = File.ReadAllText($"Inputs/Day{day:0#}.txt").TrimEnd().Replace("\r", "");
 
                 RunDay(inst, input);
 
@@ -34,12 +34,12 @@ namespace AdventOfCode2018
         private static void RunDay(IDay day, string input)
         {
             Console.WriteLine($"{day.GetType().Name}, {nameof(IDay.Part1)}");
-            day.Part1(input);
-            Console.WriteLine();
+            var r1 = day.Part1(input);
+            Console.WriteLine("Result: {0}\n", r1);
 
             Console.WriteLine($"{day.GetType().Name}, {nameof(IDay.Part2)}");
-            day.Part2(input);
-            Console.WriteLine();
+            var r2 = day.Part2(input);
+            Console.WriteLine("Result: {0}\n", r2);
         }
     }
 }

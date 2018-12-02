@@ -2,8 +2,8 @@
 {
     internal interface IDay
     {
-        void Part1(string input);
+        string Part1(string input);
 
-        void Part2(string input);
+        string Part2(string input);
     }
 }
