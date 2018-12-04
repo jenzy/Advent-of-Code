@@ -2,134 +2,178 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AdventOfCode2018.Days
 {
     /*
+--- Day 4: Repose Record ---
+
+You've sneaked into another supply closet - this time, it's across from the prototype suit manufacturing lab.
+You need to sneak inside and fix the issues with the suit, but there's a guard stationed outside the lab,
+so this is as close as you can safely get.
+
+As you search the closet for anything that might help, you discover that you're not the first person to want to sneak in.
+Covering the walls, someone has spent an hour starting every midnight for the past few months secretly observing this guard post!
+They've been writing down the ID of the one guard on duty that night - the Elves seem to have
+decided that one guard was enough for the overnight shift - as well as when they fall asleep or wake up while at their post (your puzzle input).
+
+For example, consider the following records, which have already been organized into chronological order:
+
+[1518-11-01 00:00] Guard #10 begins shift
+[1518-11-01 00:05] falls asleep
+[1518-11-01 00:25] wakes up
+[1518-11-01 00:30] falls asleep
+[1518-11-01 00:55] wakes up
+[1518-11-01 23:58] Guard #99 begins shift
+[1518-11-02 00:40] falls asleep
+[1518-11-02 00:50] wakes up
+[1518-11-03 00:05] Guard #10 begins shift
+[1518-11-03 00:24] falls asleep
+[1518-11-03 00:29] wakes up
+[1518-11-04 00:02] Guard #99 begins shift
+[1518-11-04 00:36] falls asleep
+[1518-11-04 00:46] wakes up
+[1518-11-05 00:03] Guard #99 begins shift
+[1518-11-05 00:45] falls asleep
+[1518-11-05 00:55] wakes up
+
+Timestamps are written using year-month-day hour:minute format.
+The guard falling asleep or waking up is always the one whose shift most recently started.
+Because all asleep/awake times are during the midnight hour (00:00 - 00:59), only the minute portion (00 - 59) is relevant for those events.
+
+Visually, these records show that the guards are asleep at these times:
+
+Date   ID   Minute
+            000000000011111111112222222222333333333344444444445555555555
+            012345678901234567890123456789012345678901234567890123456789
+11-01  #10  .....####################.....#########################.....
+11-02  #99  ........................................##########..........
+11-03  #10  ........................#####...............................
+11-04  #99  ....................................##########..............
+11-05  #99  .............................................##########.....
+
+The columns are Date, which shows the month-day portion of the relevant day; ID, which shows the guard on duty that day;
+and Minute, which shows the minutes during which the guard was asleep within the midnight hour.
+(The Minute column's header shows the minute's ten's digit in the first row and the one's digit in the second row.)
+Awake is shown as ., and asleep is shown as #.
+
+Note that guards count as asleep on the minute they fall asleep, and they count as awake on the minute they wake up.
+For example, because Guard #10 wakes up at 00:25 on 1518-11-01, minute 25 is marked as awake.
+
+If you can figure out the guard most likely to be asleep at a specific time,
+you might be able to trick that guard into working tonight so you can have the best chance of sneaking in.
+You have two strategies for choosing the best guard/minute combination.
+
+Strategy 1: Find the guard that has the most minutes asleep. What minute does that guard spend asleep the most?
+
+In the example above, Guard #10 spent the most minutes asleep, a total of 50 minutes (20+25+5),
+while Guard #99 only slept for a total of 30 minutes (10+10+10). Guard #10 was asleep most during
+minute 24 (on two days, whereas any other minute the guard was asleep was only seen on one day).
+
+While this example listed the entries in chronological order, your entries are in the order you found them.
+You'll need to organize them before they can be analyzed.
+
+What is the ID of the guard you chose multiplied by the minute you chose?
+(In the above example, the answer would be 10 * 24 = 240.)
+
+--- Part Two ---
+
+Strategy 2: Of all guards, which guard is most frequently asleep on the same minute?
+
+In the example above, Guard #99 spent minute 45 asleep more than any other guard or minute - three times in total.
+(In all other cases, any guard spent any minute asleep at most twice.)
+
+What is the ID of the guard you chose multiplied by the minute you chose? (In the above example, the answer would be 99 * 45 = 4455.)
 
      */
     internal class Day04 : IDay
     {
         public string Part1(string input)
         {
-            var events = Parse(input);
-            var list = new List<GuardAsleep>();
+            var sleepPeriods = GetAsleepPeriods(Parse(input)).ToList();
 
-            int guardId = 0;
-            DateTime? from = null;
-            foreach (var @event in events.OrderBy(e => e.Timestamp))
-            {
-                if (@event.EventType == EventType.StartShift && @event.GuardId != null)
-                {
-                    guardId = @event.GuardId.Value;
-                }
-                else if (@event.EventType == EventType.FallAsleep)
-                {
-                    from = @event.Timestamp;
-                }
-                else if (from != null)
-                {
-                    list.Add(new GuardAsleep
-                    {
-                        From = from.Value,
-                        To = @event.Timestamp,
-                        Id = guardId
-                    });
-                    from = null;
-                }
-            }
+            int guardId = sleepPeriods.GroupBy(g => g.Id)
+                                      .Select(g => new { Id = g.Key, MinutesAsleep = g.Sum(x => x.To.Minute - x.From.Minute) })
+                                      .MaxBy(x => x.MinutesAsleep).Id;
 
-            var tmp = list.GroupBy(g => g.Id)
-                          .Select(g => new
-                          {
-                              id = g.Key,
-                              minutesAsleep = g.Sum(x => x.MinutesAssleep)
-                          })
-                          .OrderByDescending(g => g.minutesAsleep)
-                          .First();
+            int minute = sleepPeriods.Where(g => g.Id == guardId)
+                                     .SelectMany(x => x.MinutesAsleep)
+                                     .GroupBy(x => x)
+                                     .MaxBy(x => x.Count())
+                                     .Key;
 
-            int minute = list.Where(g => g.Id == tmp.id)
-                             .Select(x => Enumerable.Range(x.From.Minute, x.To.Minute - x.From.Minute))
-                             .SelectMany(x => x)
-                             .GroupBy(x => x)
-                             .OrderByDescending(g => g.Count())
-                             .Select(g => g.Key)
-                             .First();
-
-            return (tmp.id * minute).ToString();
+            return (guardId * minute).ToString();
         }
 
         public string Part2(string input)
         {
-            var events = Parse(input);
-            var list = new List<GuardAsleep>();
+            var sleepPeriods = GetAsleepPeriods(Parse(input)).ToList();
 
+            var result = sleepPeriods.GroupBy(g => g.Id)
+                                     .Select(guard => new
+                                     {
+                                         Id = guard.Key,
+                                         Minute = guard.SelectMany(x => x.MinutesAsleep)
+                                                       .GroupBy(x => x)
+                                                       .MaxBy(g => g.Count())
+                                     })
+                                     .MaxBy(g => g.Minute.Count());
+
+            return (result.Id * result.Minute.Key).ToString();
+        }
+
+        private static IEnumerable<Event> Parse(string input)
+        {
+            var regex = new Regex(@"\[(?<TIME>\d+-\d+-\d+ \d+:\d+)\] (?<EVENT>wakes up|falls asleep|Guard #(?<ID>\d+) begins shift)");
+
+            return input.Split("\n")
+                        .Select(l => regex.Match(l))
+                        .Where(l => l.Success)
+                        .Select(m => new Event
+                        {
+                            Id = int.TryParse(m.Groups["ID"].Value, out int i) ? i : (int?) null,
+                            IsWakeUp = m.Groups["EVENT"].Value.EndsWith("up"),
+                            Timestamp = DateTime.ParseExact(m.Groups["TIME"].Value, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)
+                        })
+                        .OrderBy(e => e.Timestamp)
+                        .ToList();
+        }
+
+        private static IEnumerable<GuardAsleep> GetAsleepPeriods(IEnumerable<Event> events)
+        {
             int guardId = 0;
-            DateTime? from = null;
+            DateTime from = DateTime.MinValue;
+
             foreach (var @event in events.OrderBy(e => e.Timestamp))
             {
-                if (@event.EventType == EventType.StartShift && @event.GuardId != null)
+                if (@event.Id != null)
                 {
-                    guardId = @event.GuardId.Value;
+                    guardId = @event.Id.Value;
                 }
-                else if (@event.EventType == EventType.FallAsleep)
+                else if (!@event.IsWakeUp)
                 {
                     from = @event.Timestamp;
                 }
-                else if (from != null)
+                else
                 {
-                    list.Add(new GuardAsleep
+                    yield return new GuardAsleep
                     {
-                        From = from.Value,
+                        From = from,
                         To = @event.Timestamp,
                         Id = guardId
-                    });
-                    from = null;
+                    };
                 }
             }
-
-            var tmp = list.GroupBy(g => g.Id)
-                          .Select(guard => new
-                          {
-                              id = guard.Key,
-                              minute = guard.Select(x => Enumerable.Range(x.From.Minute, x.To.Minute - x.From.Minute))
-                                            .SelectMany(x => x)
-                                            .GroupBy(x => x)
-                                            .OrderByDescending(g => g.Count())
-                                            .Select(g => new {g.Key, count = g.Count()})
-                                            .First()
-                          })
-                          .OrderByDescending(g => g.minute.count)
-                          .First();
-
-            return (tmp.id * tmp.minute.Key).ToString();
-        }
-
-        private static List<Event> Parse(string input)
-        {
-            return input.Split("\n")
-                        .Select(l =>
-                        {
-                            var spl1 = l.Split("]");
-                            var ixHash = spl1[1].IndexOf('#');
-                            var ixSpace = ixHash > 0 ? spl1[1].IndexOf(' ', ixHash) : -1;
-                            return new Event
-                            {
-                                Timestamp = DateTime.ParseExact(spl1[0].TrimStart('['), "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture),
-                                GuardId = ixHash > 0 ? int.Parse(spl1[1].Substring(ixHash+1, ixSpace - ixHash-1)) : (int?)null,
-                                EventType = ixHash > 0 ?  EventType.StartShift : spl1[1].EndsWith("up") ? EventType.WakeUp : EventType.FallAsleep
-                            };
-                        })
-                        .ToList();
         }
 
         private class Event
         {
-            public EventType EventType { get; set; }
-
-            public int? GuardId { get; set; }
+            public int? Id { get; set; }
 
             public DateTime Timestamp { get; set; }
+
+            public bool IsWakeUp { get; set; }
         }
 
         private class GuardAsleep
@@ -140,14 +184,7 @@ namespace AdventOfCode2018.Days
 
             public DateTime To { get; set; }
 
-            public int MinutesAssleep => To.Minute - From.Minute;
-        }
-
-        private enum EventType
-        {
-            StartShift,
-            FallAsleep,
-            WakeUp
+            public IEnumerable<int> MinutesAsleep => Enumerable.Range(From.Minute, To.Minute - From.Minute);
         }
     }
 }
