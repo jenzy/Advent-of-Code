@@ -74,9 +74,9 @@ What is the ID of the only claim that doesn't overlap?
 
     internal class Day03 : IDay
     {
-        public string Part1(string input) => GetOvelaps(Parse(input)).Values.Count(c => c.Count > 1).ToString();
+        public object Part1(string input) => GetOvelaps(Parse(input)).Values.Count(c => c.Count > 1);
 
-        public string Part2(string input)
+        public object Part2(string input)
         {
             var claims = Parse(input);
             GetOvelaps(claims);

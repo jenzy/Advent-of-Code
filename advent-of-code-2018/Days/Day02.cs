@@ -70,15 +70,15 @@ this is found by removing the differing character from either ID, producing fgij
      */
     internal class Day02 : IDay
     {
-        public string Part1(string input)
+        public object Part1(string input)
         {
             var data = Parse(input);
             var c1 = data.Count(w => w.counts.Contains(2));
             var c2 = data.Count(w => w.counts.Contains(3));
-            return (c1 * c2).ToString();
+            return c1 * c2;
         }
 
-        public string Part2(string input)
+        public object Part2(string input)
         {
             var ids = Parse(input).Where(w => w.counts.Contains(2) || w.counts.Contains(3))
                                   .Select(w => w.id)

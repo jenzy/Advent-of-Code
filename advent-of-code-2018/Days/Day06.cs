@@ -5,7 +5,7 @@ namespace AdventOfCode2018.Days
     /*
 
      */
-    internal class DayX : IDay
+    internal class Day06 : IDay
     {
         public object Part1(string input)
         {

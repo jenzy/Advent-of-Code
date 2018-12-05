@@ -76,9 +76,9 @@ What is the first frequency your device reaches twice?
 
     internal class Day01 : IDay
     {
-        public string Part1(string input) => Parse(input).Sum().ToString();
+        public object Part1(string input) => Parse(input).Sum();
 
-        public string Part2(string input)
+        public object Part2(string input)
         {
             var set = new HashSet<int>();
             int sum = 0;
@@ -91,7 +91,7 @@ What is the first frequency your device reaches twice?
                 set.Add(sum);
             }
 
-            return sum.ToString();
+            return sum;
         }
 
         private static IEnumerable<int> Parse(string input) => input.Split("\n").Select(int.Parse);

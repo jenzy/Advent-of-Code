@@ -10,6 +10,8 @@ namespace AdventOfCode2018
         {
             for(;;)
                 yield return item;
+
+            // ReSharper disable once IteratorNeverReturns
         }
 
         public static IEnumerable<T> RepeatForever<T>(this IEnumerable<T> seq) => seq.RepeatForever<IEnumerable<T>>().SelectMany(x => x);
@@ -71,5 +73,9 @@ namespace AdventOfCode2018
                 return max;
             }
         }
+
+        public static char ToUpper(this in char c) => char.ToUpper(c);
+
+        public static bool IsUpper(this in char c) => char.IsUpper(c);
     }
 }

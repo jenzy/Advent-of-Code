@@ -89,7 +89,7 @@ What is the ID of the guard you chose multiplied by the minute you chose? (In th
      */
     internal class Day04 : IDay
     {
-        public string Part1(string input)
+        public object Part1(string input)
         {
             var sleepPeriods = GetAsleepPeriods(Parse(input)).ToList();
 
@@ -103,10 +103,10 @@ What is the ID of the guard you chose multiplied by the minute you chose? (In th
                                      .MaxBy(x => x.Count())
                                      .Key;
 
-            return (guardId * minute).ToString();
+            return guardId * minute;
         }
 
-        public string Part2(string input)
+        public object Part2(string input)
         {
             var sleepPeriods = GetAsleepPeriods(Parse(input)).ToList();
 
@@ -120,7 +120,7 @@ What is the ID of the guard you chose multiplied by the minute you chose? (In th
                                      })
                                      .MaxBy(g => g.Minute.Count());
 
-            return (result.Id * result.Minute.Key).ToString();
+            return result.Id * result.Minute.Key;
         }
 
         private static IEnumerable<Event> Parse(string input)
