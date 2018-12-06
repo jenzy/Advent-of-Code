@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AdventOfCode2018
+namespace AdventOfCode2018.Utilities
 {
-    public static class Utilities
+    public static class Utils
     {
         public static IEnumerable<T> RepeatForever<T>(this T item)
         {
