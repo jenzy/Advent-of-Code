@@ -110,7 +110,7 @@ With 5 workers and the 60+ second step durations described above, how long will 
     {
         public object Part1(string input)
         {
-            var graph = Parse2(input);
+            var graph = Parse(input);
             var solvedSteps = new List<string>();
             var noDeps = graph.SelectMany(x => x.Value).Where(x => !graph.ContainsKey(x)).ToHashSet();
 
@@ -132,7 +132,7 @@ With 5 workers and the 60+ second step durations described above, how long will 
         public object Part2(string input)
         {
             const int maxWorkers = 5;
-            var graph = Parse2(input);
+            var graph = Parse(input);
             var noDeps = graph.SelectMany(x => x.Value).Where(x => !graph.ContainsKey(x)).ToHashSet();
 
             int time = 0;
@@ -173,7 +173,7 @@ With 5 workers and the 60+ second step durations described above, how long will 
             return time - 1;
         }
 
-        private static Dictionary<string, ImmutableList<string>> Parse2(string input)
+        private static Dictionary<string, ImmutableList<string>> Parse(string input)
         {
             return input.Split("\n")
                         .Select(x => Regex.Match(x, @"Step (?<P>[A-Z]) must be finished before step (?<S>[A-Z]) can begin."))
