@@ -2,8 +2,12 @@
 {
     internal interface IDay
     {
-        object Part1(string input);
+        string Input { get; set; }
 
-        object Part2(string input);
+        string InputRaw { get; set; }
+
+        object Part1();
+
+        object Part2();
     }
 }

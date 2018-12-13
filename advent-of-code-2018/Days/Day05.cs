@@ -59,15 +59,15 @@ In this example, removing all C/c units was best, producing the answer 4.
 What is the length of the shortest polymer you can produce by removing all units of exactly one type and fully reacting the result?
 
      */
-    internal class Day05 : IDay
+    internal class Day05 : DayBase
     {
-        public object Part1(string input) => Reduce(input.ToCharArray());
+        public override object Part1() => Reduce(Input.ToCharArray());
 
-        public object Part2(string input) => input.Select(char.ToUpper)
+        public override object Part2() => Input.Select(char.ToUpper)
                                                   .Distinct()
                                                   .Aggregate(
                                                       seed: int.MaxValue,
-                                                      (acc, letter) => Math.Min(acc, Reduce(input.Where(c => c.ToUpper() != letter))));
+                                                      (acc, letter) => Math.Min(acc, Reduce(Input.Where(c => c.ToUpper() != letter))));
 
         private static int Reduce(IEnumerable<char> data)
         {

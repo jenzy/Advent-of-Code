@@ -88,17 +88,17 @@ For example:
 What is the X,Y,size identifier of the square with the largest total power?
 
      */
-    internal class Day11 : IDay
+    internal class Day11 : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
-            var (x, y, _) = Solve(int.Parse(input), 3);
+            var (x, y, _) = Solve(int.Parse(Input), 3);
             return $"{x},{y}";
         }
 
-        public object Part2(string input)
+        public override object Part2()
         {
-            var (x, y, maxSize) = Solve(int.Parse(input), int.MaxValue);
+            var (x, y, maxSize) = Solve(int.Parse(Input), int.MaxValue);
             return $"{x},{y},{maxSize}";
         }
 

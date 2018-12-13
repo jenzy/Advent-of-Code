@@ -14,10 +14,10 @@ namespace AdventOfCode2018
             try
             {
                 var inst = (IDay)Activator.CreateInstance(Type.GetType($"{typeof(DayX).Namespace}.Day{day:0#}"));
-                //var input = File.ReadAllText($"Inputs/Day{day:0#}.txt").TrimEnd().Replace("\r", "");
-                var input = File.ReadAllText($"Inputs/Day{day:0#}.txt").Replace("\r", "");
+                inst.InputRaw = File.ReadAllText($"Inputs/Day{day:0#}.txt");
+                inst.Input = inst.InputRaw.TrimEnd().Replace("\r", "");
 
-                RunDay(inst, input);
+                RunDay(inst);
 
                 Console.WriteLine("Done");
             }
@@ -33,20 +33,20 @@ namespace AdventOfCode2018
             }
         }
 
-        private static void RunDay(IDay day, string input)
+        private static void RunDay(IDay day)
         {
             var sw = new Stopwatch();
 
             Console.WriteLine($"{day.GetType().Name}, {nameof(IDay.Part1)}");
             sw.Start();
-            var r1 = day.Part1(input);
+            var r1 = day.Part1();
             sw.Stop();
             Console.WriteLine("Result: {0}\n", r1);
             Console.WriteLine("Time: {0}\n", sw.Elapsed);
 
             Console.WriteLine($"{day.GetType().Name}, {nameof(IDay.Part2)}");
             sw.Restart();
-            var r2 = day.Part2(input);
+            var r2 = day.Part2();
             sw.Stop();
             Console.WriteLine("Result: {0}\n", r2);
             Console.WriteLine("Time: {0}\n", sw.Elapsed);

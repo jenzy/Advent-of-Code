@@ -69,19 +69,19 @@ What letters are common between the two correct box IDs? (In the example above,
 this is found by removing the differing character from either ID, producing fgij.)
 
      */
-    internal class Day02 : IDay
+    internal class Day02 : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
-            var data = Parse(input);
+            var data = Parse(Input);
             var c1 = data.Count(w => w.counts.Contains(2));
             var c2 = data.Count(w => w.counts.Contains(3));
             return c1 * c2;
         }
 
-        public object Part2(string input)
+        public override object Part2()
         {
-            var ids = Parse(input).Where(w => w.counts.Contains(2) || w.counts.Contains(3))
+            var ids = Parse(Input).Where(w => w.counts.Contains(2) || w.counts.Contains(3))
                                   .Select(w => w.id)
                                   .ToList();
 

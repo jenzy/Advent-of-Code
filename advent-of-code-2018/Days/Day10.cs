@@ -172,11 +172,11 @@ long time - much longer than the 3 seconds in the example above.
 Impressed by your sub-hour communication capabilities, the Elves are curious:
 exactly how many seconds would they have needed to wait for that message to appear?
      */
-    internal class Day10 : IDay
+    internal class Day10 : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
-            var points = Parse(input);
+            var points = Parse(Input);
 
             int i = 0, prevDiff = int.MaxValue;
             for (; ; i++)
@@ -216,7 +216,7 @@ exactly how many seconds would they have needed to wait for that message to appe
             return i;
         }
 
-        public object Part2(string input) => null;
+        public override object Part2() => null;
 
         private static List<(int x, int y, int vx, int vy)> Parse(string input)
         {

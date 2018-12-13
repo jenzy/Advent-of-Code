@@ -88,11 +88,11 @@ In the example above, Guard #99 spent minute 45 asleep more than any other guard
 What is the ID of the guard you chose multiplied by the minute you chose? (In the above example, the answer would be 99 * 45 = 4455.)
 
      */
-    internal class Day04 : IDay
+    internal class Day04 : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
-            var sleepPeriods = GetAsleepPeriods(Parse(input)).ToList();
+            var sleepPeriods = GetAsleepPeriods(Parse(Input)).ToList();
 
             int guardId = sleepPeriods.GroupBy(g => g.Id)
                                       .Select(g => new { Id = g.Key, MinutesAsleep = g.Sum(x => x.To.Minute - x.From.Minute) })
@@ -107,9 +107,9 @@ What is the ID of the guard you chose multiplied by the minute you chose? (In th
             return guardId * minute;
         }
 
-        public object Part2(string input)
+        public override object Part2()
         {
-            var sleepPeriods = GetAsleepPeriods(Parse(input)).ToList();
+            var sleepPeriods = GetAsleepPeriods(Parse(Input)).ToList();
 
             var result = sleepPeriods.GroupBy(g => g.Id)
                                      .Select(guard => new

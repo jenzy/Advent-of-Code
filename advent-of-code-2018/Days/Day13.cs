@@ -233,11 +233,11 @@ After four very expensive crashes, a tick ends with only one cart remaining; its
 What is the location of the last cart at the end of the first tick where it is the only cart left?
 
      */
-    internal class Day13 : IDay
+    internal class Day13 : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
-            var (map, carts) = Parse(input);
+            var (map, carts) = Parse(InputRaw);
 
             while (true)
             {
@@ -257,9 +257,9 @@ What is the location of the last cart at the end of the first tick where it is t
             }
         }
 
-        public object Part2(string input)
+        public override object Part2()
         {
-            var (map, carts) = Parse(input);
+            var (map, carts) = Parse(InputRaw);
 
             while (carts.Count > 1)
             {

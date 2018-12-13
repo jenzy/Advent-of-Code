@@ -81,17 +81,17 @@ Amused by the speed of your answer, the Elves are curious:
 What would the new winning Elf's score be if the number of the last marble were 100 times larger?
 
      */
-    internal class Day09 : IDay
+    internal class Day09 : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
-            (int nPlayers, int nMarbles) = Parse(input);
+            (int nPlayers, int nMarbles) = Parse(Input);
             return Solve(nPlayers, nMarbles);
         }
 
-        public object Part2(string input)
+        public override object Part2()
         {
-            (int nPlayers, int nMarbles) = Parse(input);
+            (int nPlayers, int nMarbles) = Parse(Input);
             return Solve(nPlayers, nMarbles * 100);
         }
 

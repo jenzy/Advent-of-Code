@@ -75,12 +75,12 @@ So, in this example, the value of the root node is 66.
 What is the value of the root node?
 
      */
-    internal class Day08 : IDay
+    internal class Day08 : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
             int sum = 0;
-            Process(Parse(input));
+            Process(Parse(Input));
 
             ReadOnlySpan<int> Process(ReadOnlySpan<int> remainder)
             {
@@ -102,9 +102,9 @@ What is the value of the root node?
             return sum;
         }
 
-        public object Part2(string input)
+        public override object Part2()
         {
-            Process(Parse(input), out int result);
+            Process(Parse(Input), out int result);
 
             ReadOnlySpan<int> Process(ReadOnlySpan<int> remainder, out int val)
             {

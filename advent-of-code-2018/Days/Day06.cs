@@ -108,11 +108,11 @@ instead including all locations with a total distance of less than 10000.
 What is the size of the region containing all locations which have a total distance to all given coordinates of less than 10000?
 
      */
-    internal class Day06 : IDay
+    internal class Day06 : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
-            var points = Parse(input);
+            var points = Parse(Input);
             var bounds = GetBounds(points);
 
             var counts = new Dictionary<int, int>();
@@ -152,9 +152,9 @@ What is the size of the region containing all locations which have a total dista
             return counts.Values.Max();
         }
 
-        public object Part2(string input)
+        public override object Part2()
         {
-            var points = Parse(input);
+            var points = Parse(Input);
             return AllPointsInBounds(GetBounds(points)).Count(point => points.Sum(t => Dist(point, t)) < 10000);
         }
 

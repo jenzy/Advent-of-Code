@@ -106,11 +106,11 @@ In this example, it would take 15 seconds for two workers to complete these step
 With 5 workers and the 60+ second step durations described above, how long will it take to complete all of the steps?
 
      */
-    internal class Day07 : IDay
+    internal class Day07 : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
-            var graph = Parse(input);
+            var graph = Parse(Input);
             var solvedSteps = new List<string>();
             var noDeps = graph.SelectMany(x => x.Value).Where(x => !graph.ContainsKey(x)).ToHashSet();
 
@@ -129,10 +129,10 @@ With 5 workers and the 60+ second step durations described above, how long will 
             return string.Join("", solvedSteps);
         }
 
-        public object Part2(string input)
+        public override object Part2()
         {
             const int maxWorkers = 5;
-            var graph = Parse(input);
+            var graph = Parse(Input);
             var noDeps = graph.SelectMany(x => x.Value).Where(x => !graph.ContainsKey(x)).ToHashSet();
 
             int time = 0;

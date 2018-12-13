@@ -75,16 +75,16 @@ Here are other examples:
 What is the first frequency your device reaches twice?
      */
 
-    internal class Day01 : IDay
+    internal class Day01 : DayBase
     {
-        public object Part1(string input) => Parse(input).Sum();
+        public override object Part1() => Parse(Input).Sum();
 
-        public object Part2(string input)
+        public override object Part2()
         {
             var set = new HashSet<int>();
             int sum = 0;
 
-            foreach(var i in Parse(input).RepeatForever())
+            foreach(var i in Parse(Input).RepeatForever())
             {
                 if (set.Contains(sum += i))
                     break;

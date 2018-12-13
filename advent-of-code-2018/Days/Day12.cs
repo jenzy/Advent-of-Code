@@ -107,13 +107,13 @@ After all, these plants will need to last another 1500 years to even reach your 
 
 After fifty billion (50000000000) generations, what is the sum of the numbers of all pots which contain a plant?
      */
-    internal class Day12 : IDay
+    internal class Day12 : DayBase
     {
-        public object Part1(string input) => Solve(input, 20).sum;
+        public override object Part1() => Solve(Input, 20).sum;
 
-        public object Part2(string input)
+        public override object Part2()
         {
-            var (g, sum, diff) = Solve(input, 2000);
+            var (g, sum, diff) = Solve(Input, 2000);
             return (50000000000 - g) * diff + sum;
         }
 

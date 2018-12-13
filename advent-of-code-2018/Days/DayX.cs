@@ -5,15 +5,15 @@ namespace AdventOfCode2018.Days
     /*
 
      */
-    internal class DayX : IDay
+    internal class DayX : DayBase
     {
-        public object Part1(string input)
+        public override object Part1()
         {
             Console.WriteLine("TODO");
             return null;
         }
 
-        public object Part2(string input)
+        public override object Part2()
         {
             Console.WriteLine("TODO");
             return null;

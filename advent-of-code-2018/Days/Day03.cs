@@ -72,13 +72,13 @@ What is the ID of the only claim that doesn't overlap?
 
      */
 
-    internal class Day03 : IDay
+    internal class Day03 : DayBase
     {
-        public object Part1(string input) => GetOvelaps(Parse(input)).Values.Count(c => c.Count > 1);
+        public override object Part1() => GetOvelaps(Parse(Input)).Values.Count(c => c.Count > 1);
 
-        public object Part2(string input)
+        public override object Part2()
         {
-            var claims = Parse(input);
+            var claims = Parse(Input);
             GetOvelaps(claims);
             return claims.Single(c => !c.Overlaps).Id;
         }
