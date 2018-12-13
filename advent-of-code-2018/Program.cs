@@ -14,7 +14,8 @@ namespace AdventOfCode2018
             try
             {
                 var inst = (IDay)Activator.CreateInstance(Type.GetType($"{typeof(DayX).Namespace}.Day{day:0#}"));
-                var input = File.ReadAllText($"Inputs/Day{day:0#}.txt").TrimEnd().Replace("\r", "");
+                //var input = File.ReadAllText($"Inputs/Day{day:0#}.txt").TrimEnd().Replace("\r", "");
+                var input = File.ReadAllText($"Inputs/Day{day:0#}.txt").Replace("\r", "");
 
                 RunDay(inst, input);
 
