@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AdventOfCode2018.Utilities
 {
@@ -77,5 +78,13 @@ namespace AdventOfCode2018.Utilities
         public static char ToUpper(this in char c) => char.ToUpper(c);
 
         public static bool IsUpper(this in char c) => char.IsUpper(c);
+
+        public static bool TryMatch(this Regex regex, string input, out Match match)
+        {
+            match = regex.Match(input);
+            return match.Success;
+        }
+
+        public static string Get(this Match match, string name) => match.Groups[name].Value;
     }
 }
