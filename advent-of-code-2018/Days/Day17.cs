@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2018.Days
@@ -12,14 +15,14 @@ namespace AdventOfCode2018.Days
     {
         public override object Part1()
         {
-            Input = @"x=495, y=2..7
-y=7, x=495..501
-x=501, y=3..7
-x=498, y=2..4
-x=506, y=1..2
-x=498, y=10..13
-x=504, y=10..13
-y=13, x=498..504";
+//            Input = @"x=495, y=2..7
+//y=7, x=495..501
+//x=501, y=3..7
+//x=498, y=2..4
+//x=506, y=1..2
+//x=498, y=10..13
+//x=504, y=10..13
+//y=13, x=498..504";
             var map = Parse();
             int minx = map.Keys.Min(x => x.x);
             int maxx = map.Keys.Max(x => x.x);
@@ -53,43 +56,65 @@ y=13, x=498..504";
                 {
                     map[coord] = '|';
                     var left = (coord.x - 1, coord.y);
+                    var right = (coord.x + 1, coord.y);
+
+                    bool filled = false;
                     if (Get(map, left) == '#')
-                    //        stack.Push((coord.x-1, coord.y));
-                    //        stack.Push((coord.x+1, coord.y));
+                    {
+                        filled = Fill(map, coord, left: false);
+                        if (!filled)
+                        {
+                            stack.Push(right);
+                        }
+                    }
+                    else if (Get(map, right) == '#')
+                    {
+                        filled = Fill(map, coord, left: true);
+                        if (!filled)
+                        {
+                            stack.Push(left);
+                        }
+                    }
+                    else
+                    {
+                        if (Get(map, right) == '.')
+                            stack.Push(right);
+                        if (Get(map, left) == '.')
+                            stack.Push(left);
+                    }
+                }
+                else if (below == '|')
+                {
+                    map[coord] = '|';
+                    continue;
                 }
                 else
                 {
-                    
+                    Debug.Assert(below == '.');
+                    map[coord] = '|';
+                    if (coordBelow.y <= maxy)
+                    {
+                        stack.Push(coord);
+                        stack.Push(coordBelow);
+                    }
                 }
 
-                //if (map.TryGetValue(coordBelow, out var below))
-                //{
-                //    if (below == '#' || below == '~')
-                //    {
-                //        map[coord] = '~';
-                //        stack.Push((coord.x-1, coord.y));
-                //        stack.Push((coord.x+1, coord.y));
-                //    }
-                //    else if (below == '|')
-                //    {
-                //        continue;
-                //    }
-                //}
-                //else
-                //{
-                //    map[coord] = '|';
-                //    if (coordBelow.y <= maxy)
-                //    {
-                //    stack.Push(coord);
-                //    stack.Push(coordBelow);
-                //    }
-                //}
+                //Print(map);
+                //Console.Write(">");
+                //Console.ReadKey();
             }
 
-            Print(map);
+            //Print(map);
 
+            //var r = map.Count(x => (x.Value == '|' || x.Value == '~')
+            //                       && x.Key.y >= miny
+            //                       && x.Key.y <= maxy);
 
-            return null;
+            var r = map.Count(x => (x.Value == '~')
+                                   && x.Key.y >= miny
+                                   && x.Key.y <= maxy);
+
+            return r;
         }
 
         public override object Part2()
@@ -105,19 +130,24 @@ y=13, x=498..504";
             int miny = map.Keys.Min(x => x.y);
             int maxy = map.Keys.Max(x => x.y);
 
+            var sb = new StringBuilder("\n");
+
             for (int y = miny; y <= maxy; y++)
             {
                 for (int x = minx; x <= maxx; x++)
                 {
-                    if(map.TryGetValue((x, y), out char c))
-                        Console.Write(c);
+                    if (map.TryGetValue((x, y), out char c))
+                        sb.Append(c);
                     else
-                        Console.Write('.');
+                        sb.Append('.');
                 }
-                Console.WriteLine();
+                sb.Append('\n');
             }
-                Console.WriteLine();
-                Console.WriteLine();
+                sb.Append('\n');
+                sb.Append('\n');
+                //Console.WriteLine(sb.ToString());
+
+            File.WriteAllText("out.txt", sb.ToString());
         }
 
         private static char Get(Dictionary<(int x, int y), char> map, (int x, int y) coord)
@@ -147,7 +177,7 @@ y=13, x=498..504";
 
                     var coordBelow = (cur.x, cur.y + 1);
                     var below = Get(map, coordBelow);
-                    if (below != '#' || below != '~')
+                    if (below != '#' && below != '~')
                         return false;
 
                     cur = (cur.x - 1, cur.y);
@@ -169,7 +199,7 @@ y=13, x=498..504";
 
                     var coordBelow = (cur.x, cur.y + 1);
                     var below = Get(map, coordBelow);
-                    if (below != '#' || below != '~')
+                    if (below != '#' && below != '~')
                         return false;
 
                     cur = (cur.x + 1, cur.y);
