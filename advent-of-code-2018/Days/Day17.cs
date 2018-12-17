@@ -37,8 +37,7 @@ y=13, x=498..504";
                 if (coord.y > maxy)
                     continue;
 
-                if (!map.TryGetValue(coord, out var c))
-                    c = '.';
+                var c = Get(map, coord);
                 if (c == '#' || c == '~')
                     continue;
 
@@ -48,28 +47,43 @@ y=13, x=498..504";
                 //}
 
                 var coordBelow = (coord.x, y: coord.y + 1);
-                if (map.TryGetValue(coordBelow, out var below))
+                var below = Get(map, coordBelow);
+
+                if (below == '#' || below == '~')
                 {
-                    if (below == '#' || below == '~')
-                    {
-                        map[coord] = '~';
-                        stack.Push((coord.x-1, coord.y));
-                        stack.Push((coord.x+1, coord.y));
-                    }
-                    else if (below == '|')
-                    {
-                        continue;
-                    }
+                    map[coord] = '|';
+                    var left = (coord.x - 1, coord.y);
+                    if (Get(map, left) == '#')
+                    //        stack.Push((coord.x-1, coord.y));
+                    //        stack.Push((coord.x+1, coord.y));
                 }
                 else
                 {
-                    map[coord] = '|';
-                    if (coordBelow.y <= maxy)
-                    {
-                    stack.Push(coord);
-                    stack.Push(coordBelow);
-                    }
+                    
                 }
+
+                //if (map.TryGetValue(coordBelow, out var below))
+                //{
+                //    if (below == '#' || below == '~')
+                //    {
+                //        map[coord] = '~';
+                //        stack.Push((coord.x-1, coord.y));
+                //        stack.Push((coord.x+1, coord.y));
+                //    }
+                //    else if (below == '|')
+                //    {
+                //        continue;
+                //    }
+                //}
+                //else
+                //{
+                //    map[coord] = '|';
+                //    if (coordBelow.y <= maxy)
+                //    {
+                //    stack.Push(coord);
+                //    stack.Push(coordBelow);
+                //    }
+                //}
             }
 
             Print(map);
@@ -104,6 +118,74 @@ y=13, x=498..504";
             }
                 Console.WriteLine();
                 Console.WriteLine();
+        }
+
+        private static char Get(Dictionary<(int x, int y), char> map, (int x, int y) coord)
+        {
+            if (map.TryGetValue(coord, out char c))
+                return c;
+
+            return '.';
+        }
+
+        private static bool Fill(Dictionary<(int x, int y), char> map, (int x, int y) coord, bool left)
+        {
+            int? from = null;
+            int? to = null;
+            if (left)
+            {
+                to = coord.x;
+                var cur = coord;
+                while (true)
+                {
+                    var c = Get(map, cur);
+                    if (c == '#')
+                        break;
+
+                    if (c != '|')
+                        return false;
+
+                    var coordBelow = (cur.x, cur.y + 1);
+                    var below = Get(map, coordBelow);
+                    if (below != '#' || below != '~')
+                        return false;
+
+                    cur = (cur.x - 1, cur.y);
+                }
+                from = cur.x + 1;
+            }
+            else
+            {
+                from = coord.x;
+                var cur = coord;
+                while (true)
+                {
+                    var c = Get(map, cur);
+                    if (c == '#')
+                        break;
+
+                    if (c != '|')
+                        return false;
+
+                    var coordBelow = (cur.x, cur.y + 1);
+                    var below = Get(map, coordBelow);
+                    if (below != '#' || below != '~')
+                        return false;
+
+                    cur = (cur.x + 1, cur.y);
+                }
+                to = cur.x - 1;
+            }
+
+            if (from != null && to != null)
+            {
+                for (int x = from.Value; x <= to.Value; x++)
+                {
+                    map[(x, coord.y)] = '~';
+                }
+            }
+
+            return true;
         }
 
         private Dictionary<(int x, int y), char> Parse()
@@ -143,6 +225,20 @@ y=13, x=498..504";
                 for (int x = c.X1; x <= c.X2; x++)
                     map[(x, c.Y)] = '#';
             }
+
+            int minx = map.Keys.Min(x => x.x);
+            int maxx = map.Keys.Max(x => x.x);
+            int miny = map.Keys.Min(x => x.y);
+            int maxy = map.Keys.Max(x => x.y);
+
+            //for (int y = miny; y <= maxy; y++)
+            //{
+            //    for (int x = minx; x <= maxx; x++)
+            //    {
+            //        if (!map.ContainsKey((x, y)))
+            //            map[(x, y)] = '.';
+            //    }
+            //}
 
             return map;
         }
