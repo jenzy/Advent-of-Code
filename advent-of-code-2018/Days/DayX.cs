@@ -19,9 +19,9 @@ namespace AdventOfCode2018.Days
             return null;
         }
 
-        private static object Parse(string input)
+        private object Parse()
         {
-            return input;
+            return Input;
         }
     }
 }
