@@ -86,5 +86,10 @@ namespace AdventOfCode2018.Utilities
         }
 
         public static string Get(this Match match, string name) => match.Groups[name].Value;
+
+        public static bool HasAtLeast<T>(this IEnumerable<T> enumerable, int amount)
+        {
+            return enumerable.Take(amount).Count() == amount;
+        }
     }
 }
