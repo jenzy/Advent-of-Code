@@ -95,7 +95,7 @@ What value is left in register 0 when this new background process halts?
     {
         public override object Part1()
         {
-            var program = Parse(out int ipReg);
+            var program = Parse(out int ipReg, Input);
             var reg = new int[6];
 
             while (reg[ipReg] < program.Count)
@@ -109,7 +109,7 @@ What value is left in register 0 when this new background process halts?
 
         public override object Part2()
         {
-            var program = Parse(out int ipReg);
+            var program = Parse(out int ipReg, Input);
 
             var reg = new int[6];
             reg[0] = 1;
@@ -188,10 +188,10 @@ while R1 <= R3
              */
         }
 
-        private List<Instruction> Parse(out int ip)
+        public static List<Instruction> Parse(out int ip, string input)
         {
             ip = -1;
-            var lines = Input.Split("\n");
+            var lines = input.Split("\n");
             var program = new List<Instruction>();
 
             foreach (string line in lines)
@@ -208,7 +208,7 @@ while R1 <= R3
             return program;
         }
 
-        private static int[] ApplyInstruction(int[] reg, Instruction instr)
+        public static int[] ApplyInstruction(int[] reg, Instruction instr)
         {
             switch (instr.OpCode)
             {
@@ -281,7 +281,7 @@ while R1 <= R3
         }
 
 
-        private class Instruction
+        public class Instruction
         {
             public Instruction(string instruction)
             {
