@@ -75,6 +75,31 @@ namespace AdventOfCode2018.Utilities
             }
         }
 
+        public static (TKey min, TKey max) MinMax<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector, IComparer<TKey> comparer = null)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (selector == null) throw new ArgumentNullException(nameof(selector));
+            comparer = comparer ?? Comparer<TKey>.Default;
+
+            using (var sourceIterator = source.GetEnumerator())
+            {
+                if (!sourceIterator.MoveNext())
+                    throw new InvalidOperationException("Sequence contains no elements");
+
+                var max = selector(sourceIterator.Current);
+                var min = selector(sourceIterator.Current);
+                while (sourceIterator.MoveNext())
+                {
+                    var candidateProjected = selector(sourceIterator.Current);
+                    if (comparer.Compare(candidateProjected, max) > 0)
+                        max = candidateProjected;
+                    if (comparer.Compare(candidateProjected, min) < 0)
+                        min = candidateProjected;
+                }
+                return (min, max);
+            }
+        }
+
         public static char ToUpper(this in char c) => char.ToUpper(c);
 
         public static bool IsUpper(this in char c) => char.IsUpper(c);
@@ -90,6 +115,13 @@ namespace AdventOfCode2018.Utilities
         public static bool HasAtLeast<T>(this IEnumerable<T> enumerable, int amount)
         {
             return enumerable.Take(amount).Count() == amount;
+        }
+
+        public static IEnumerable<long> Range(long start, long count, long step = 1)
+        {
+            var end = start + count;
+            for (var i = start; i < end; i += step)
+                yield return i;
         }
     }
 }
