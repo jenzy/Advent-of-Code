@@ -13,7 +13,7 @@ namespace AdventOfCode2018
 
             try
             {
-                var inst = (IDay)Activator.CreateInstance(Type.GetType($"{typeof(DayX).Namespace}.Day{day:0#}"));
+                var inst = (IDay)Activator.CreateInstance(Type.GetType($"{typeof(Day01).Namespace}.Day{day:0#}"));
                 inst.InputRaw = File.ReadAllText($"Inputs/Day{day:0#}.txt");
                 inst.Input = inst.InputRaw.TrimEnd().Replace("\r", "");
 

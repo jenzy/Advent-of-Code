@@ -5,7 +5,7 @@ namespace AdventOfCode2018.Days
     /*
 
      */
-    internal class DayX : DayBase
+    internal class Day25 : DayBase
     {
         public override object Part1()
         {
