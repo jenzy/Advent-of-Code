@@ -19,7 +19,7 @@ namespace AdventOfCode.Y2017.Days
 
         public void Part2(string input)
         {
-            Console.WriteLine("Result: " + resultPart2);
+            Console.WriteLine("Result: " + (resultPart2+1));
         }
 
         private void Solve(string input)

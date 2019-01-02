@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using AdventOfCode.Y2017.Days;
 
 namespace AdventOfCode.Y2017
@@ -27,6 +28,31 @@ namespace AdventOfCode.Y2017
             {
                 Console.WriteLine("Press enter to exit.");
                 Console.ReadLine();
+            }
+        }
+
+        internal static string SolveDay(int day)
+        {
+            var inst = (IDay)Activator.CreateInstance(Type.GetType($"{typeof(Day1).Namespace}.Day{day}"));
+            var input = (string)typeof(Input).GetField($"Day{day}").GetValue(null);
+
+            var output = Console.Out;
+            using (var tw = new StringWriter())
+            {
+                Console.SetOut(tw);
+                try
+                {
+                    inst.Part1(input);
+                    inst.Part2(input);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+                Console.SetOut(output);
+
+                return tw.GetStringBuilder().Replace("\n", "").Replace("\r", "").ToString();
             }
         }
 
