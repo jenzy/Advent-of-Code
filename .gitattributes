@@ -63,3 +63,4 @@
 #*.RTF   diff=astextplain
 
 src/advent-of-code-2017/Input.cs linguist-vendored
+src/advent-of-code-2018/Inputs/* linguist-vendored
