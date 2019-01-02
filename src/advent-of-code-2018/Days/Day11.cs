@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AdventOfCode2018.Days
+namespace AdventOfCode.Y2018.Days
 {
     /*
 --- Day 11: Chronal Charge ---

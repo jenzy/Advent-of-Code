@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode2018
+﻿namespace AdventOfCode.Y2018
 {
     internal abstract class DayBase : IDay
     {

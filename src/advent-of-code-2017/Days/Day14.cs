@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace AdventOfCode2017.Days
+namespace AdventOfCode.Y2017.Days
 {
     internal class Day14 : IDay
     {

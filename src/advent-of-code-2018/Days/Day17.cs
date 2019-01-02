@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using AdventOfCode.Common;
 
-namespace AdventOfCode2018.Days
+namespace AdventOfCode.Y2018.Days
 {
     /*
 --- Day 17: Reservoir Research ---

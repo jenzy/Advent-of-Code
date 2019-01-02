@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AdventOfCode2018.Days
+namespace AdventOfCode.Y2018.Days
 {
     /*
 --- Day 7: The Sum of Its Parts ---

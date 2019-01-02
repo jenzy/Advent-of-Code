@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace AdventOfCode2018.Days
+namespace AdventOfCode.Y2018.Days
 {
     /*
 --- Day 19: Go With The Flow ---

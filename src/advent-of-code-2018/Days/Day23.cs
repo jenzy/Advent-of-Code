@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using static System.Math;
 
-namespace AdventOfCode2018.Days
+namespace AdventOfCode.Y2018.Days
 {
     /*
 --- Day 23: Experimental Emergency Teleportation ---

@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "advent-of-code-2017", "src\advent-of-code-2017\advent-of-code-2017.csproj", "{6B1C34A9-5F9C-47AD-9A6C-AA49E9E65E24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "advent-of-code.2017", "src\advent-of-code-2017\advent-of-code.2017.csproj", "{6B1C34A9-5F9C-47AD-9A6C-AA49E9E65E24}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1836A990-0B94-45E0-B616-29680D70DB96}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "advent-of-code-2018", "src\advent-of-code-2018\advent-of-code-2018.csproj", "{81D58309-6CF2-404B-A1AB-71B83DB0BE2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "advent-of-code.2018", "src\advent-of-code-2018\advent-of-code.2018.csproj", "{81D58309-6CF2-404B-A1AB-71B83DB0BE2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "advent-of-code-common", "advent-of-code-common\advent-of-code-common.csproj", "{E94BB924-D633-4954-8289-F29AEF14848D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "advent-of-code.common", "advent-of-code-common\advent-of-code.common.csproj", "{E94BB924-D633-4954-8289-F29AEF14848D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

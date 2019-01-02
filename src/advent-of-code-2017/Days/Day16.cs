@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
-namespace AdventOfCode2017.Days
+namespace AdventOfCode.Y2017.Days
 {
     internal class Day16 : IDay
     {

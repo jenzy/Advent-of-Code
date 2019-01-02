@@ -1,7 +1,7 @@
 ﻿using System;
-using AdventOfCode2017.Days;
+using AdventOfCode.Y2017.Days;
 
-namespace AdventOfCode2017
+namespace AdventOfCode.Y2017
 {
     internal static class Program
     {

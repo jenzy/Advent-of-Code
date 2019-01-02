@@ -2,7 +2,7 @@
 using System.Linq;
 using static System.Math;
 
-namespace AdventOfCode2017.Days
+namespace AdventOfCode.Y2017.Days
 {
     internal class Day11 : IDay
     {

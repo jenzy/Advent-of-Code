@@ -3,8 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>AdventOfCode2017</AssemblyName>
-    <RootNamespace>AdventOfCode2017</RootNamespace>
+    <AssemblyName>AdventOfCode.Y2017</AssemblyName>
+    <RootNamespace>AdventOfCode.Y2017</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using AdventOfCode2018.Days;
+using AdventOfCode.Y2018.Days;
 
-namespace AdventOfCode2018
+namespace AdventOfCode.Y2018
 {
     internal static class Program
     {

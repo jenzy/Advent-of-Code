@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using AdventOfCode.Common;
 
-namespace AdventOfCode2018.Days
+namespace AdventOfCode.Y2018.Days
 {
     /*
 --- Day 18: Settlers of The North Pole ---

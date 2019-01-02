@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AdventOfCode2017.Days
+namespace AdventOfCode.Y2017.Days
 {
     internal class Day15 : IDay
     {

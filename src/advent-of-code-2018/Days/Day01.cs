@@ -2,7 +2,7 @@
 using System.Linq;
 using AdventOfCode.Common;
 
-namespace AdventOfCode2018.Days
+namespace AdventOfCode.Y2018.Days
 {
     /*
 --- Day 1: Chronal Calibration ---
