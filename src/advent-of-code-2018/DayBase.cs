@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Y2018
 {
-    internal abstract class DayBase : IDay
+    public abstract class DayBase : IDay
     {
         public string Input { get; set; }
 

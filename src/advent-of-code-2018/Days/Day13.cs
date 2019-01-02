@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -233,7 +234,7 @@ After four very expensive crashes, a tick ends with only one cart remaining; its
 What is the location of the last cart at the end of the first tick where it is the only cart left?
 
      */
-    internal class Day13 : DayBase
+    public class Day13 : DayBase
     {
         public override object Part1()
         {
@@ -311,9 +312,20 @@ What is the location of the last cart at the end of the first tick where it is t
             return (map, carts);
         }
 
-        private enum Turn { Left, Straight, Right }
+        private enum Turn
+        {
+            Left,
+            Straight,
+            Right
+        }
 
-        private enum Direction { North, East, South, West }
+        private enum Direction
+        {
+            North,
+            East,
+            South,
+            West
+        }
 
         private class Cart
         {
@@ -382,6 +394,14 @@ What is the location of the last cart at the end of the first tick where it is t
             public override int GetHashCode() => (X * 397) ^ Y;
 
             public override string ToString() => $"{X},{Y}";
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(13);
+            Assert.Equal("76,108", day.Part1().ToString());
+            Assert.Equal("2,84", day.Part2().ToString());
         }
     }
 }

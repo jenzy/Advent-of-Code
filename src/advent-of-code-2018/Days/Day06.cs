@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -108,7 +109,7 @@ instead including all locations with a total distance of less than 10000.
 What is the size of the region containing all locations which have a total distance to all given coordinates of less than 10000?
 
      */
-    internal class Day06 : DayBase
+    public class Day06 : DayBase
     {
         public override object Part1()
         {
@@ -205,6 +206,14 @@ What is the size of the region containing all locations which have a total dista
             }
 
             return iMin;
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(6);
+            Assert.Equal(4215, day.Part1());
+            Assert.Equal(40376, day.Part2());
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -88,7 +89,7 @@ For example:
 What is the X,Y,size identifier of the square with the largest total power?
 
      */
-    internal class Day11 : DayBase
+    public class Day11 : DayBase
     {
         public override object Part1()
         {
@@ -133,6 +134,14 @@ What is the X,Y,size identifier of the square with the largest total power?
             int rackId = x + 10;
             var pl = (rackId*y+serial)*rackId;
             return (pl % 1000 - pl % 100) / 100 - 5;
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(11);
+            Assert.Equal("235,18", day.Part1());
+            Assert.Equal("236,227,12", day.Part2());
         }
     }
 }

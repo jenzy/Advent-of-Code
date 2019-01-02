@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using AdventOfCode.Common;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -178,7 +179,7 @@ This important natural resource will need to last for at least thousands of year
 What will the total resource value of the lumber collection area be after 1000000000 minutes?
 
      */
-    internal class Day18 : DayBase
+    public class Day18 : DayBase
     {
         private static readonly (int x, int y)[] NeighboursDiff = { (-1, -1), (0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1), (1, 1) };
 
@@ -249,6 +250,14 @@ What will the total resource value of the lumber collection area be after 100000
             }
 
             return map;
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(18);
+            Assert.Equal(507755, day.Part1());
+            Assert.Equal(235080, day.Part2());
         }
     }
 }

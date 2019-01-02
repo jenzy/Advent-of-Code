@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Common;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -75,7 +76,7 @@ Here are other examples:
 What is the first frequency your device reaches twice?
      */
 
-    internal class Day01 : DayBase
+    public class Day01 : DayBase
     {
         public override object Part1() => Parse(Input).Sum();
 
@@ -96,5 +97,13 @@ What is the first frequency your device reaches twice?
         }
 
         private static IEnumerable<int> Parse(string input) => input.Split("\n").Select(int.Parse);
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(1);
+            Assert.Equal(540, day.Part1());
+            Assert.Equal(73056, day.Part2());
+        }
     }
 }

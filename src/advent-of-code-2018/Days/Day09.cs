@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -81,7 +82,7 @@ Amused by the speed of your answer, the Elves are curious:
 What would the new winning Elf's score be if the number of the last marble were 100 times larger?
 
      */
-    internal class Day09 : DayBase
+    public class Day09 : DayBase
     {
         public override object Part1()
         {
@@ -135,6 +136,14 @@ What would the new winning Elf's score be if the number of the last marble were 
         {
             var m = Regex.Match(input, @"(?<P>\d+) players; last marble is worth (?<M>\d+) points");
             return (nPlayers: int.Parse(m.Groups["P"].Value), nMarbles: int.Parse(m.Groups["M"].Value));
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(9);
+            Assert.Equal(404611L, day.Part1());
+            Assert.Equal(3350093681L, day.Part2());
         }
     }
 }

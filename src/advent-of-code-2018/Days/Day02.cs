@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -68,7 +69,7 @@ What letters are common between the two correct box IDs? (In the example above,
 this is found by removing the differing character from either ID, producing fgij.)
 
      */
-    internal class Day02 : DayBase
+    public class Day02 : DayBase
     {
         public override object Part1()
         {
@@ -100,6 +101,14 @@ this is found by removing the differing character from either ID, producing fgij
                                                      .Select(g => g.Key)
                                                      .ToHashSet()))
                         .ToList();
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(2);
+            Assert.Equal(6944, day.Part1());
+            Assert.Equal("srijafjzloguvlntqmphenbkd", day.Part2());
         }
     }
 }

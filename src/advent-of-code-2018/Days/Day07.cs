@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -106,7 +107,7 @@ In this example, it would take 15 seconds for two workers to complete these step
 With 5 workers and the 60+ second step durations described above, how long will it take to complete all of the steps?
 
      */
-    internal class Day07 : DayBase
+    public class Day07 : DayBase
     {
         public override object Part1()
         {
@@ -180,6 +181,14 @@ With 5 workers and the 60+ second step durations described above, how long will 
                         .Where(m => m.Success)
                         .GroupBy(m => m.Groups["S"].Value)
                         .ToDictionary(g => g.Key, g => g.Select(m => m.Groups["P"].Value).ToImmutableList());
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(7);
+            Assert.Equal("EFHLMTKQBWAPGIVXSZJRDUYONC", day.Part1());
+            Assert.Equal(1056, day.Part2());
         }
     }
 }

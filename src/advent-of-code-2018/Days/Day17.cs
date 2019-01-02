@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using AdventOfCode.Common;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -191,7 +192,7 @@ In the example above, water that won't eventually drain out is shown as ~, a tot
 How many water tiles are left after the water spring stops producing water and all remaining water not at rest has drained?
 
      */
-    internal class Day17 : DayBase
+    public class Day17 : DayBase
     {
         public override object Part1() => Solve().CountPart1();
 
@@ -357,6 +358,14 @@ How many water tiles are left after the water spring stops producing water and a
                 Console.WriteLine(sb.ToString());
                 //File.WriteAllText("out.txt", sb.ToString());
             }
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(17);
+            Assert.Equal(36171, day.Part1());
+            Assert.Equal(28204, day.Part2());
         }
     }
 }

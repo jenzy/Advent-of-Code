@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -174,7 +175,7 @@ Okay, so the facility is big.
 How many rooms have a shortest path from your current location that pass through at least 1000 doors?
 
      */
-    internal class Day20 : DayBase
+    public class Day20 : DayBase
     {
         public override object Part1() => Solve().Max();
 
@@ -227,6 +228,14 @@ How many rooms have a shortest path from your current location that pass through
                 case 'W': return (p.x-1, p.y);
                 default: throw new Exception($"Invalid dir {dir}");
             }
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(20);
+            Assert.Equal(3415, day.Part1());
+            Assert.Equal(8583, day.Part2());
         }
     }
 }

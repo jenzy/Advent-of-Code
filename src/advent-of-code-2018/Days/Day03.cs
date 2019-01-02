@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -72,7 +73,7 @@ What is the ID of the only claim that doesn't overlap?
 
      */
 
-    internal class Day03 : DayBase
+    public class Day03 : DayBase
     {
         public override object Part1() => GetOvelaps(Parse(Input)).Values.Count(c => c.Count > 1);
 
@@ -134,13 +135,21 @@ What is the ID of the only claim that doesn't overlap?
 
                 return new Claim
                 {
-                    Id = spl1[0].TrimStart('#'),
+                    Id = spl1[0].TrimStart('#').TrimEnd(),
                     X = int.Parse(splCoord[0].Trim()),
                     Y = int.Parse(splCoord[1].Trim()),
                     Width = int.Parse(splSize[0].Trim()),
                     Height = int.Parse(splSize[1].Trim())
                 };
             }
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(3);
+            Assert.Equal(105231, day.Part1());
+            Assert.Equal("164", day.Part2());
         }
     }
 }

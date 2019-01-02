@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Xunit;
 using static System.Math;
 
 namespace AdventOfCode.Y2018.Days
@@ -73,7 +74,7 @@ pos=<10,10,10>, r=5
 
 Many coor
      */
-    internal class Day23 : DayBase
+    public class Day23 : DayBase
     {
         public override object Part1()
         {
@@ -151,6 +152,14 @@ Many coor
             public long Z { get; }
 
             public long R { get; }
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(23);
+            Assert.Equal(588, day.Part1());
+            Assert.Equal(111227643L, day.Part2());
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -374,7 +375,7 @@ In it, 21 minutes are spent switching tools (three times, seven minutes each) an
 
 What is the fewest number of minutes you can take to reach the target?
      */
-    internal class Day22 : DayBase
+    public class Day22 : DayBase
     {
         public override object Part1()
         {
@@ -495,6 +496,14 @@ What is the fewest number of minutes you can take to reach the target?
                 if (Coord.y > 0)
                     yield return (Coord.x, Coord.y - 1);
             }
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(22);
+            Assert.Equal(5637, day.Part1());
+            Assert.Equal(969, day.Part2());
         }
     }
 }

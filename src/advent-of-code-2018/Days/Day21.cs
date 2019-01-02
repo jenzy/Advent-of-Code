@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -46,7 +47,7 @@ In order to determine the timing window for your underflow exploit, you also nee
 What is the lowest non-negative integer value for register 0 that causes the program to halt after executing the most instructions?
 (The program must actually halt; running forever does not count as halting.)
      */
-    internal class Day21 : DayBase
+    public class Day21 : DayBase
     {
         public override object Part1()
         {
@@ -109,6 +110,14 @@ What is the lowest non-negative integer value for register 0 that causes the pro
                 reg[ipReg]++;
             }
             */
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(21);
+            Assert.Equal(10961197, day.Part1());
+            Assert.Equal(8164934, day.Part2());
         }
     }
 }

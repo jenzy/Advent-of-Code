@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -91,7 +92,7 @@ A new background process immediately spins up in its place. It appears identical
 What value is left in register 0 when this new background process halts?
 
      */
-    internal class Day19 : DayBase
+    public class Day19 : DayBase
     {
         public override object Part1()
         {
@@ -299,6 +300,14 @@ while R1 <= R3
             public int B { get; }
 
             public int C { get; }
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(19);
+            Assert.Equal(2352, day.Part1());
+            Assert.Equal(24619952, day.Part2());
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -75,7 +76,7 @@ So, in this example, the value of the root node is 66.
 What is the value of the root node?
 
      */
-    internal class Day08 : DayBase
+    public class Day08 : DayBase
     {
         public override object Part1()
         {
@@ -137,5 +138,13 @@ What is the value of the root node?
         }
 
         private static ReadOnlySpan<int> Parse(string input) => input.Split().Select(int.Parse).ToArray();
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(8);
+            Assert.Equal(37262, day.Part1());
+            Assert.Equal(20839, day.Part2());
+        }
     }
 }

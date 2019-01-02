@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -346,7 +347,7 @@ so you need to be cautious and find the smallest boost that would allow the immu
 
 How many units does the immune system have left after getting the smallest boost it needs to win?
      */
-    internal class Day24 : DayBase
+    public class Day24 : DayBase
     {
         public override object Part1()
         {
@@ -504,6 +505,14 @@ How many units does the immune system have left after getting the smallest boost
                 Initiative = this.Initiative,
                 WeakTo = this.WeakTo
             };
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(24);
+            Assert.Equal(26937, day.Part1());
+            Assert.Equal(4893, day.Part2());
         }
     }
 }

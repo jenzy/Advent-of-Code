@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AdventOfCode.Common;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -59,7 +60,7 @@ In this example, removing all C/c units was best, producing the answer 4.
 What is the length of the shortest polymer you can produce by removing all units of exactly one type and fully reacting the result?
 
      */
-    internal class Day05 : DayBase
+    public class Day05 : DayBase
     {
         public override object Part1() => Reduce(Input.ToCharArray());
 
@@ -88,6 +89,14 @@ What is the length of the shortest polymer you can produce by removing all units
             }
 
             return stack.Count;
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(5);
+            Assert.Equal(11894, day.Part1());
+            Assert.Equal(5310, day.Part2());
         }
     }
 }

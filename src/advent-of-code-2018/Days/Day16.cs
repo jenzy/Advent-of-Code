@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -108,7 +109,7 @@ Using the samples you collected, work out the number of each opcode and execute 
 
 What value is contained in register 0 after executing the test program?
      */
-    internal class Day16 : DayBase
+    public class Day16 : DayBase
     {
         private static readonly OpCode[] OpCodes = Enum.GetValues(typeof(OpCode)).Cast<OpCode>().ToArray();
 
@@ -300,6 +301,14 @@ What value is contained in register 0 after executing the test program?
             public int[] RegAfter { get; set; }
 
             public Instruction Instruction { get; set; }
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(16);
+            Assert.Equal(563, day.Part1());
+            Assert.Equal(629, day.Part2());
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -120,7 +121,7 @@ The reindeer bumps the device with its nose.
 
 Both parts of this puzzle are complete! They provide two gold stars: **
      */
-    internal class Day25 : DayBase
+    public class Day25 : DayBase
     {
         public override object Part1()
         {
@@ -178,6 +179,13 @@ Both parts of this puzzle are complete! They provide two gold stars: **
             return Input.Split("\n")
                         .Select(l => l.Split(",").Select(int.Parse).ToArray())
                         .ToList();
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(25);
+            Assert.Equal(314, day.Part1());
         }
     }
 }

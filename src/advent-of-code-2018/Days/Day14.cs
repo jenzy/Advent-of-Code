@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -82,7 +83,7 @@ appear on the scoreboard to the left of the first recipes whose scores are the d
 How many recipes appear on the scoreboard to the left of the score sequence in your puzzle input?
 
      */
-    internal class Day14 : DayBase
+    public class Day14 : DayBase
     {
         public override object Part1()
         {
@@ -134,6 +135,14 @@ How many recipes appear on the scoreboard to the left of the score sequence in y
                 recipes.Add(recipe);
                 return (num * 10 + recipe) % targetMod;
             }
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(14);
+            Assert.Equal("4138145721", day.Part1().ToString());
+            Assert.Equal(20276284, day.Part2());
         }
     }
 }

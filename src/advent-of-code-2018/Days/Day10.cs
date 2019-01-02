@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -172,7 +173,7 @@ long time - much longer than the 3 seconds in the example above.
 Impressed by your sub-hour communication capabilities, the Elves are curious:
 exactly how many seconds would they have needed to wait for that message to appear?
      */
-    internal class Day10 : DayBase
+    public class Day10 : DayBase
     {
         public override object Part1()
         {
@@ -229,6 +230,13 @@ exactly how many seconds would they have needed to wait for that message to appe
                                       vx: int.Parse(m.Groups["VX"].Value),
                                       vy: int.Parse(m.Groups["VY"].Value)))
                         .ToList();
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(10);
+            Assert.Equal(10007, day.Part1());
         }
     }
 }

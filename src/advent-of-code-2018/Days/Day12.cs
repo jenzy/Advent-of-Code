@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -107,7 +108,7 @@ After all, these plants will need to last another 1500 years to even reach your 
 
 After fifty billion (50000000000) generations, what is the sum of the numbers of all pots which contain a plant?
      */
-    internal class Day12 : DayBase
+    public class Day12 : DayBase
     {
         public override object Part1() => Solve(Input, 20).sum;
 
@@ -162,6 +163,14 @@ After fifty billion (50000000000) generations, what is the sum of the numbers of
                              .ToDictionary(x => x[0].Trim(), x => x[1].Trim());
 
             return (pots, rules);
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(12);
+            Assert.Equal(1787, day.Part1());
+            Assert.Equal(1100000000475L, day.Part2());
         }
     }
 }

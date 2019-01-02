@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AdventOfCode.Common;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -88,7 +89,7 @@ In the example above, Guard #99 spent minute 45 asleep more than any other guard
 What is the ID of the guard you chose multiplied by the minute you chose? (In the above example, the answer would be 99 * 45 = 4455.)
 
      */
-    internal class Day04 : DayBase
+    public class Day04 : DayBase
     {
         public override object Part1()
         {
@@ -186,6 +187,14 @@ What is the ID of the guard you chose multiplied by the minute you chose? (In th
             public DateTime To { get; set; }
 
             public IEnumerable<int> MinutesAsleep => Enumerable.Range(From.Minute, To.Minute - From.Minute);
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(4);
+            Assert.Equal(73646, day.Part1());
+            Assert.Equal(4727, day.Part2());
         }
     }
 }

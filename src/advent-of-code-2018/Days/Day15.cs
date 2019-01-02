@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace AdventOfCode.Y2018.Days
 {
@@ -430,7 +431,7 @@ After increasing the Elves' attack power until it is just barely enough for them
 what is the outcome of the combat described in your puzzle input?
 
      */
-    internal class Day15 : DayBase
+    public class Day15 : DayBase
     {
         public override object Part1() => Battle(Parse(), breakOnElfDeath: false);
 
@@ -623,6 +624,14 @@ what is the outcome of the combat described in your puzzle input?
             public void MoveTo((int x, int y) loc) => (X, Y) = (loc.x, loc.y);
 
             public Unit Clone() => new Unit(X, Y, Type);
+        }
+
+        [Fact]
+        public static void Test()
+        {
+            var day = Program.CreateInstance(15);
+            Assert.Equal(198744, day.Part1());
+            Assert.Equal(66510, day.Part2());
         }
     }
 }
