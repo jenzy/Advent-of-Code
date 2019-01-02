@@ -1,4 +1,4 @@
-﻿using AdventOfCode2018.Utilities;
+﻿using AdventOfCode.Common;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;

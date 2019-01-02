@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using AdventOfCode2018.Utilities;
+using AdventOfCode.Common;
 
 namespace AdventOfCode2018.Days
 {

@@ -3,21 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AdventOfCode2018.Utilities
+namespace AdventOfCode.Common
 {
-    public static class Utils
+    public static class Extensions
     {
         public static IEnumerable<T> RepeatForever<T>(this T item)
         {
-            for(;;)
+            while(true)
                 yield return item;
 
             // ReSharper disable once IteratorNeverReturns
         }
 
         public static IEnumerable<T> RepeatForever<T>(this IEnumerable<T> seq) => seq.RepeatForever<IEnumerable<T>>().SelectMany(x => x);
-
-        public static IEnumerable<(T1 a, T2 b)> Zip<T1, T2>(this IEnumerable<T1> items1, IEnumerable<T2> items2) => items1.Zip(items2, (a, b) => (a, b));
 
         public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector, IComparer<TKey> comparer = null)
         {
@@ -117,11 +115,5 @@ namespace AdventOfCode2018.Utilities
             return enumerable.Take(amount).Count() == amount;
         }
 
-        public static IEnumerable<long> Range(long start, long count, long step = 1)
-        {
-            var end = start + count;
-            for (var i = start; i < end; i += step)
-                yield return i;
-        }
     }
 }

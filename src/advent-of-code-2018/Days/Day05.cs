@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AdventOfCode2018.Utilities;
+using AdventOfCode.Common;
 
 namespace AdventOfCode2018.Days
 {

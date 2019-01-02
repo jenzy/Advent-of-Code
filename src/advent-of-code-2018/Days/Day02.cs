@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AdventOfCode2018.Utilities;
 
 namespace AdventOfCode2018.Days
 {
@@ -87,10 +86,10 @@ this is found by removing the differing character from either ID, producing fgij
 
             var r = (from i1 in ids
                      from i2 in ids
-                     where i1.Zip(i2).Count(x => x.a != x.b) == 1
+                     where i1.Zip(i2).Count(x => x.First != x.Second) == 1
                      select (i1, i2)).FirstOrDefault();
 
-            return string.Join("", r.i1.Zip(r.i2).Where(x => x.a == x.b).Select(x => x.a));
+            return string.Join("", r.i1.Zip(r.i2).Where(x => x.First == x.Second).Select(x => x.First));
         }
 
         private static List<(string id, HashSet<int> counts)> Parse(string input)

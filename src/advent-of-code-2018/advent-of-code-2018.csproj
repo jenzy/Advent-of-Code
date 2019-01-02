@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>AdventOfCode2018</RootNamespace>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -115,6 +115,10 @@
 
   <ItemGroup>
     <PackageReference Include="OptimizedPriorityQueue" Version="4.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\advent-of-code-common\advent-of-code-common.csproj" />
   </ItemGroup>
 
 </Project>
