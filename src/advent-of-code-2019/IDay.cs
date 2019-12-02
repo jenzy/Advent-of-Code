@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode.Y2018
+﻿namespace AdventOfCode.Y2019
 {
     internal interface IDay
     {

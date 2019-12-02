@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using AdventOfCode.Y2018.Days;
+using AdventOfCode.Y2019.Days;
 
-namespace AdventOfCode.Y2018
+namespace AdventOfCode.Y2019
 {
     internal static class Program
     {
         private static void Main()
         {
-            var day = 1;// DateTime.Now.Day;
+            var day = DateTime.Now.Day;
 
             try
             {

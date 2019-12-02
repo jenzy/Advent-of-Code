@@ -2,7 +2,7 @@
 using System.Linq;
 using Xunit;
 
-namespace AdventOfCode.Y2018.Days
+namespace AdventOfCode.Y2019.Days
 {
     /*
 --- Day 1: The Tyranny of the Rocket Equation ---
