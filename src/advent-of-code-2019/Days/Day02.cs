@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace AdventOfCode.Y2019.Days
@@ -115,7 +114,7 @@ Find the input noun and verb that cause the program to produce the output 196907
 
     public class Day02 : DayBase
     {
-        public override object Part1() => Intcode.Run(Parse(Input), 12, 2);
+        public override object Part1() => Run(12, 2);
 
         public override object Part2()
         {
@@ -123,12 +122,20 @@ Find the input noun and verb that cause the program to produce the output 196907
             {
                 for (int j = 0; j < 99; j++)
                 {
-                    if (Intcode.Run(Parse(Input), i, j) == 19690720)
+                    if (Run(i, j) == 19690720)
                         return 100 * i + j;
                 }
             }
 
             throw new Exception("no result");
+        }
+
+        private int Run(int noun, int verb)
+        {
+            var data = Parse(Input).ToList();
+            data[1] = noun;
+            data[2] = verb;
+            return new Intcode(data).Run().SimpleOutput;
         }
 
         private static IEnumerable<int> Parse(string input) => input.Split(",").Select(int.Parse);
@@ -141,41 +148,108 @@ Find the input noun and verb that cause the program to produce the output 196907
             Assert.Equal(6429, day.Part2());
         }
 
-        public static class Intcode
+        public class Intcode
         {
-            public const int OpAdd = 1;
-            public const int OpMul = 2;
-            public const int OpExit = 99;
+            private const int OpAdd = 1;
+            private const int OpMul = 2;
+            private const int OpInput = 3;
+            private const int OpOutput = 4;
+            private const int OpJumpIfTrue = 5;
+            private const int OpJumpIfFalse = 6;
+            private const int OpLessThan = 7;
+            private const int OpEquals = 8;
+            private const int OpExit = 99;
 
-            public static int Run(IEnumerable<int> memory, int noun, int verb)
+            private int pc = 0;
+            private readonly IList<int> data;
+            private readonly Queue<int> input;
+
+            public Intcode(IEnumerable<int> memory, IEnumerable<int> input = null)
             {
-                var data = memory.ToList();
-                data[1] = noun;
-                data[2] = verb;
+                this.data = memory as IList<int> ?? memory.ToList();
+                this.input = input != null ? new Queue<int>(input) : new Queue<int>();
+                this.Output = new Queue<int>();
+            }
+            
+            public bool PrintOutput { get; } = false;
 
-                int pc = 0;
+            public int SimpleOutput => data[0];
+
+            public Queue<int> Output { get; }
+            
+            private int CurrentOpcodeFull => data[pc];
+
+            private int CurrentOpcode => CurrentOpcodeFull % 100;
+            
+            public Intcode Run()
+            {
                 while (true)
                 {
-                    int opcode = data[pc];
-                    
+                    int opcode = CurrentOpcode;
                     if (opcode == OpExit)
                         break;
                     
                     switch (opcode)
                     {
                         case OpAdd:
-                            data[data[pc + 3]] = data[data[pc + 1]] + data[data[pc + 2]];
+                            data[data[pc + 3]] = GetArg(1) + GetArg(2);
+                            pc += 4;
                             break;
                         
                         case OpMul:
-                            data[data[pc + 3]] = data[data[pc + 1]] * data[data[pc + 2]];
+                            data[data[pc + 3]] = GetArg(1) * GetArg(2);
+                            pc += 4;
                             break;
-                    }
+                        
+                        case OpInput:
+                            data[data[pc + 1]] = input.Dequeue();
+                            pc += 2;
+                            break;
+                        
+                        case OpOutput:
+                            var a = GetArg(1);
+                            Output.Enqueue(a);
+                            if (PrintOutput)
+                                Console.WriteLine(a);
+                            pc += 2;
+                            break;
+                        
+                        case OpJumpIfTrue:
+                            if (GetArg(1) != 0)
+                                pc = GetArg(2);
+                            else
+                                pc += 3;
+                            break;
 
-                    pc += 4;
+                        case OpJumpIfFalse:
+                            if (GetArg(1) == 0)
+                                pc = GetArg(2);
+                            else
+                                pc += 3;
+                            break;
+
+                        case OpLessThan:
+                            data[data[pc + 3]] = GetArg(1) < GetArg(2) ? 1 : 0;
+                            pc += 4;
+                            break;
+                        
+                        case OpEquals:
+                            data[data[pc + 3]] = GetArg(1) == GetArg(2) ? 1 : 0;
+                            pc += 4;
+                            break;
+                        
+                        default:
+                            throw new InvalidOperationException("Unknown opcode " + opcode);
+                    }
                 }
 
-                return data[0];
+                return this;
+            }
+
+            private int GetArg(int argNum)
+            {
+                int mode = (CurrentOpcodeFull % (int) Math.Pow(10, argNum + 2)) / (int) Math.Pow(10, argNum + 1);
+                return mode > 0 ? data[pc + argNum] : data[data[pc + argNum]];
             }
         }
     }
