@@ -148,6 +148,8 @@ Find the input noun and verb that cause the program to produce the output 196907
             Assert.Equal(6429, day.Part2());
         }
 
+        public enum IntcodeState { Ready, PendingInput, Done }
+        
         public class Intcode
         {
             private const int OpAdd = 1;
@@ -162,16 +164,18 @@ Find the input noun and verb that cause the program to produce the output 196907
 
             private int pc = 0;
             private readonly IList<int> data;
-            private readonly Queue<int> input;
+            private Queue<int> input;
 
             public Intcode(IEnumerable<int> memory, IEnumerable<int> input = null)
             {
-                this.data = memory as IList<int> ?? memory.ToList();
-                this.input = input != null ? new Queue<int>(input) : new Queue<int>();
+                this.data = memory.ToList();
+                this.input = input as Queue<int> ?? new Queue<int>(input ?? Enumerable.Empty<int>()); 
                 this.Output = new Queue<int>();
             }
             
             public bool PrintOutput { get; } = false;
+            
+            public IntcodeState State { get; private set; } = IntcodeState.Ready;
 
             public int SimpleOutput => data[0];
 
@@ -180,6 +184,11 @@ Find the input noun and verb that cause the program to produce the output 196907
             private int CurrentOpcodeFull => data[pc];
 
             private int CurrentOpcode => CurrentOpcodeFull % 100;
+
+            public void SetInput(Queue<int> customInput)
+            {
+                this.input = customInput;
+            }
             
             public Intcode Run()
             {
@@ -187,8 +196,11 @@ Find the input noun and verb that cause the program to produce the output 196907
                 {
                     int opcode = CurrentOpcode;
                     if (opcode == OpExit)
+                    {
+                        State = IntcodeState.Done;
                         break;
-                    
+                    }
+
                     switch (opcode)
                     {
                         case OpAdd:
@@ -202,7 +214,13 @@ Find the input noun and verb that cause the program to produce the output 196907
                             break;
                         
                         case OpInput:
-                            data[data[pc + 1]] = input.Dequeue();
+                            if (!input.TryDequeue(out int inValue))
+                            {
+                                State = IntcodeState.PendingInput;
+                                return this;
+                            }
+                            
+                            data[data[pc + 1]] = inValue;
                             pc += 2;
                             break;
                         
