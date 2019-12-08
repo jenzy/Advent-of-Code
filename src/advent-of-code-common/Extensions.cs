@@ -114,6 +114,5 @@ namespace AdventOfCode.Common
         {
             return enumerable.Take(amount).Count() == amount;
         }
-
     }
 }
