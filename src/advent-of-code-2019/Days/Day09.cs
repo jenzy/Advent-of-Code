@@ -1,13 +1,75 @@
-﻿using System;
+﻿using AdventOfCode.Y2019.Common;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
-using AdventOfCode.Common;
 
 namespace AdventOfCode.Y2019.Days
 {
     /*
+--- Day 9: Sensor Boost ---
+
+You've just said goodbye to the rebooted rover and left Mars when you receive a faint distress signal coming from the asteroid belt.
+It must be the Ceres monitoring station!
+
+In order to lock on to the signal, you'll need to boost your sensors.
+The Elves send up the latest BOOST program - Basic Operation Of System Test.
+
+While BOOST (your puzzle input) is capable of boosting your sensors, for tenuous safety reasons,
+it refuses to do so until the computer it runs on passes some checks to demonstrate it is a complete Intcode computer.
+
+Your existing Intcode computer is missing one key feature: it needs support for parameters in relative mode.
+
+Parameters in mode 2, relative mode, behave very similarly to parameters in position mode:
+the parameter is interpreted as a position. Like position mode, parameters in relative mode can be read from or written to.
+
+The important difference is that relative mode parameters don't count from address 0.
+Instead, they count from a value called the relative base. The relative base starts at 0.
+
+The address a relative mode parameter refers to is itself plus the current relative base.
+When the relative base is 0, relative mode parameters and position mode parameters with the same value refer to the same address.
+
+For example, given a relative base of 50, a relative mode parameter of -7 refers to memory address 50 + -7 = 43.
+
+The relative base is modified with the relative base offset instruction:
+
+    Opcode 9 adjusts the relative base by the value of its only parameter.
+    The relative base increases (or decreases, if the value is negative) by the value of the parameter.
+
+For example, if the relative base is 2000, then after the instruction 109,19, the relative base would be 2019.
+If the next instruction were 204,-34, then the value at address 1985 would be output.
+
+Your Intcode computer will also need a few other capabilities:
+
+    The computer's available memory should be much larger than the initial program.
+        Memory beyond the initial program starts with the value 0 and can be read or written like any other memory.
+        (It is invalid to try to access memory at a negative address, though.)
+    The computer should have support for large numbers.
+        Some instructions near the beginning of the BOOST program will verify this capability.
+
+Here are some example programs that use these features:
+
+    109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99 takes no input and produces a copy of itself as output.
+    1102,34915192,34915192,7,4,7,99,0 should output a 16-digit number.
+    104,1125899906842624,99 should output the large number in the middle.
+
+The BOOST program will ask for a single input; run it in test mode by providing it the value 1.
+    It will perform a series of checks on each opcode, output any opcodes (and the associated parameter modes)
+    that seem to be functioning incorrectly, and finally output a BOOST keycode.
+
+Once your Intcode computer is fully functional, the BOOST program should report no malfunctioning opcodes when run in test mode;
+it should only output a single value, the BOOST keycode. What BOOST keycode does it produce?
+
+--- Part Two ---
+
+You now have a complete Intcode computer.
+
+Finally, you can lock on to the Ceres distress signal! You just need to boost your sensors using the BOOST program.
+
+The program runs in sensor boost mode by providing the input instruction the value 2.
+Once run, it will boost the sensors automatically, but it might take a few seconds to complete the operation on slower hardware.
+In sensor boost mode, the program will output a single value: the coordinates of the distress signal.
+
+Run the BOOST program in sensor boost mode. What are the coordinates of the distress signal?
 
      */
 
@@ -23,161 +85,8 @@ namespace AdventOfCode.Y2019.Days
         public static void Test()
         {
             var day = Program.CreateInstance(9);
-            Assert.Equal(3454977209, day.Part1());
-            Assert.Equal(50102, day.Part2());
-        }
-
-
-        public enum IntcodeState { Ready, PendingInput, Done }
-
-        public class Intcode
-        {
-            private const int OpAdd = 1;
-            private const int OpMul = 2;
-            private const int OpInput = 3;
-            private const int OpOutput = 4;
-            private const int OpJumpIfTrue = 5;
-            private const int OpJumpIfFalse = 6;
-            private const int OpLessThan = 7;
-            private const int OpEquals = 8;
-            private const int OpRel = 9;
-            private const int OpExit = 99;
-
-            private int pc = 0;
-            private long rb = 0;
-            private readonly IDictionary<int, long> data;
-            private Queue<long> input;
-
-            public Intcode(IEnumerable<long> memory, IEnumerable<long> input = null)
-            {
-                this.data = memory.Select((x, ix) => (x, ix)).ToDictionary(x => x.ix, x => x.x);
-                this.input = input as Queue<long> ?? new Queue<long>(input ?? Enumerable.Empty<long>());
-                this.Output = new Queue<long>();
-            }
-
-            public bool PrintOutput { get; } = false;
-
-            public IntcodeState State { get; private set; } = IntcodeState.Ready;
-
-            public long SimpleOutput => data[0];
-
-            public Queue<long> Output { get; }
-
-            private int CurrentOpcodeFull => (int)data[pc];
-
-            private int CurrentOpcode => CurrentOpcodeFull % 100;
-
-            public void SetInput(Queue<long> customInput)
-            {
-                this.input = customInput;
-            }
-
-            public Intcode Run()
-            {
-                while (true)
-                {
-                    int opcode = CurrentOpcode;
-                    if (opcode == OpExit)
-                    {
-                        State = IntcodeState.Done;
-                        break;
-                    }
-
-                    switch (opcode)
-                    {
-                        case OpAdd:
-                            GetArg(3, out int pos);
-                            data[pos] = GetArg(1, out var _) + GetArg(2, out var _);
-                            pc += 4;
-                            break;
-
-                        case OpMul:
-                            GetArg(3, out int pos1);
-                            data[pos1] = GetArg(1, out var _) * GetArg(2, out var _);
-                            pc += 4;
-                            break;
-
-                        case OpInput:
-                            if (!input.TryDequeue(out long inValue))
-                            {
-                                State = IntcodeState.PendingInput;
-                                return this;
-                            }
-
-                            GetArg(1, out int poss);
-                            data[poss] = inValue;
-                            pc += 2;
-                            break;
-
-                        case OpOutput:
-                            var a = GetArg(1, out var _);
-                            Output.Enqueue(a);
-                            if (PrintOutput)
-                                Console.WriteLine(a);
-                            pc += 2;
-                            break;
-
-                        case OpJumpIfTrue:
-                            if (GetArg(1, out var _) != 0)
-                                pc = (int)GetArg(2, out var _);
-                            else
-                                pc += 3;
-                            break;
-
-                        case OpJumpIfFalse:
-                            if (GetArg(1, out var _) == 0)
-                                pc = (int)GetArg(2, out var _);
-                            else
-                                pc += 3;
-                            break;
-
-                        case OpLessThan:
-                            GetArg(3, out int pos2);
-                            data[pos2] = GetArg(1, out var _) < GetArg(2, out var _) ? 1 : 0;
-                            pc += 4;
-                            break;
-
-                        case OpEquals:
-                            GetArg(3, out int pos3);
-                            data[pos3] = GetArg(1, out var _) == GetArg(2, out var _) ? 1 : 0;
-                            pc += 4;
-                            break;
-
-                        case OpRel:
-                            rb += GetArg(1, out var _);
-                            pc += 2;
-                            break;
-
-                        default:
-                            throw new InvalidOperationException("Unknown opcode " + opcode);
-                    }
-                }
-
-                return this;
-            }
-
-            private long GetArg(int argNum, out int position)
-            {
-                int mode = (CurrentOpcodeFull % (int)Math.Pow(10, argNum + 2)) / (int)Math.Pow(10, argNum + 1);
-
-                if (mode == 1)
-                {
-                    position = pc + argNum;
-                    data.TryGetValue(position, out var val1);
-                    return val1;
-                }
-
-                if (mode == 0)
-                {
-                    position = (int)data[pc + argNum];
-                    data.TryGetValue(position, out var val2);
-                    return val2;
-                }
-
-                position = (int)rb + (int)data[pc + argNum];
-                data.TryGetValue(position, out var val);
-                return val;
-            }
+            Assert.Equal("3454977209", day.Part1());
+            Assert.Equal("50120", day.Part2());
         }
     }
 }

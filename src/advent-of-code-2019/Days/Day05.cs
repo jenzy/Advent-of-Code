@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AdventOfCode.Y2019.Common;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -126,18 +127,18 @@ What is the diagnostic code for system ID 5?
 
     public class Day05 : DayBase
     {
-        public override object Part1() => new Day02.Intcode(Parse(Input), Enumerable.Repeat(1, 1)).Run().Output.Last();
-        
-        public override object Part2() => new Day02.Intcode(Parse(Input), Enumerable.Repeat(5, 1)).Run().Output.Last();
+        public override object Part1() => new Intcode(Parse(Input), Enumerable.Repeat(1L, 1)).Run().Output.Last();
 
-        private static IEnumerable<int> Parse(string input) => input.Split(",").Select(int.Parse);
+        public override object Part2() => new Intcode(Parse(Input), Enumerable.Repeat(5L, 1)).Run().Output.Last();
+
+        private static IEnumerable<long> Parse(string input) => input.Split(",").Select(long.Parse);
 
         [Fact]
         public static void Test()
         {
             var day = Program.CreateInstance(5);
-            Assert.Equal(4601506, day.Part1());
-            Assert.Equal(5525561, day.Part2());
+            Assert.Equal(4601506L, day.Part1());
+            Assert.Equal(5525561L, day.Part2());
         }
     }
 }

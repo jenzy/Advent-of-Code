@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AdventOfCode.Y2019.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -120,20 +121,20 @@ Try every combination of the new phase settings on the amplifier feedback loop. 
             var program = Parse(Input).ToList();
 
             return Permute(new List<int> {0, 1, 2, 3, 4})
-                    .Select(perm => perm.Aggregate(0, (input, phase) => RunAmplifier(phase, input)))
+                    .Select(perm => perm.Aggregate(0L, (input, phase) => RunAmplifier(phase, input)))
                     .Max();
-            
-            int RunAmplifier(params int[] input) => new Day02.Intcode(program, input).Run().Output.Dequeue();
+
+            long RunAmplifier(params long[] input) => new Intcode(program, input).Run().Output.Dequeue();
         }
 
         public override object Part2()
         {
             var program = Parse(Input).ToList();
 
-            int max = 0;
+            long max = 0;
             foreach (var perm in Permute(new List<int> {5, 6, 7, 8, 9}))
             {
-                var amps = perm.Select(_ => new Day02.Intcode(program)).ToList();
+                var amps = perm.Select(_ => new Intcode(program)).ToList();
                 for (int i = 0; i < amps.Count; i++)
                 {
                     var prevAmp = amps[(i - 1 + amps.Count) % amps.Count];
@@ -142,7 +143,7 @@ Try every combination of the new phase settings on the amplifier feedback loop. 
                 }
                 amps.Last().Output.Enqueue(0);
 
-                while (amps.Last().State != Day02.IntcodeState.Done)
+                while (amps.Last().State != Intcode.IntcodeState.Done)
                 {
                     foreach (var amp in amps)
                         amp.Run();
@@ -153,14 +154,14 @@ Try every combination of the new phase settings on the amplifier feedback loop. 
 
             return max;
         }
-        
+
         private static IEnumerable<List<int>> Permute(IList<int> data, int l = 0, int? r = null)
         {
             r ??= data.Count - 1;
 
             if (l == r)
                 yield return data.ToList();
-            
+
             for (int i = l; i <= r; i++)
             {
                 Swap(l, i);
@@ -175,16 +176,16 @@ Try every combination of the new phase settings on the amplifier feedback loop. 
                 data[ii] = data[jj];
                 data[jj] = tmp;
             }
-        } 
-  
-        private static IEnumerable<int> Parse(string input) => input.Split(",").Select(int.Parse);
+        }
+
+        private static IEnumerable<long> Parse(string input) => input.Split(",").Select(long.Parse);
 
         [Fact]
         public static void Test()
         {
             var day = Program.CreateInstance(7);
-            Assert.Equal(277328, day.Part1());
-            Assert.Equal(11304734, day.Part2());
+            Assert.Equal(277328L, day.Part1());
+            Assert.Equal(11304734L, day.Part2());
         }
     }
 }
