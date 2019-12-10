@@ -17,6 +17,8 @@ namespace AdventOfCode.Common
 
         public static IEnumerable<T> RepeatForever<T>(this IEnumerable<T> seq) => seq.RepeatForever<IEnumerable<T>>().SelectMany(x => x);
 
+        public static LinkedList<T> ToLinkedList<T>(this IEnumerable<T> seq) => new LinkedList<T>(seq);
+
         public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector, IComparer<TKey> comparer = null)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
