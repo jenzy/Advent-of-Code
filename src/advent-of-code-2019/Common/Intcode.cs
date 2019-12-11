@@ -27,12 +27,11 @@ namespace AdventOfCode.Y2019.Common
         private int pc = 0;
         private long rb = 0;
         private readonly IDictionary<int, long> data;
-        private Queue<long> input;
 
         public Intcode(IEnumerable<long> memory, IEnumerable<long> input = null)
         {
             this.data = memory.Select((x, ix) => (x, ix)).ToDictionary(x => x.ix, x => x.x);
-            this.input = input as Queue<long> ?? new Queue<long>(input ?? Enumerable.Empty<long>());
+            this.Input = input as Queue<long> ?? new Queue<long>(input ?? Enumerable.Empty<long>());
             this.Output = new Queue<long>();
         }
 
@@ -40,13 +39,15 @@ namespace AdventOfCode.Y2019.Common
 
         public long SimpleOutput => data[0];
 
+        public Queue<long> Input { get; private set; }
+
         public Queue<long> Output { get; }
 
         private OpCode CurrentOpcodeFull => (OpCode)data[pc];
 
         private OpCode CurrentOpcode => (OpCode)((int)CurrentOpcodeFull % 100);
 
-        public void SetInput(Queue<long> customInput) => this.input = customInput;
+        public void SetInput(Queue<long> customInput) => this.Input = customInput;
 
         public Intcode Run()
         {
@@ -69,7 +70,7 @@ namespace AdventOfCode.Y2019.Common
                         break;
 
                     case OpCode.OpInput:
-                        if (!input.TryDequeue(out long inValue))
+                        if (!Input.TryDequeue(out long inValue))
                         {
                             State = IntcodeState.PendingInput;
                             return this;

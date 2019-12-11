@@ -1,80 +1,165 @@
 ﻿using AdventOfCode.Common;
-using System;
+using AdventOfCode.Y2019.Common;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Xunit;
 
 namespace AdventOfCode.Y2019.Days
 {
     /*
+--- Day 11: Space Police ---
+
+On the way to Jupiter, you're pulled over by the Space Police.
+
+"Attention, unmarked spacecraft! You are in violation of Space Law!
+All spacecraft must have a clearly visible registration identifier! You have 24 hours to comply or be sent to Space Jail!"
+
+Not wanting to be sent to Space Jail, you radio back to the Elves on Earth for help.
+Although it takes almost three hours for their reply signal to reach you,
+they send instructions for how to power up the emergency hull painting robot and even provide a small Intcode program (your puzzle input)
+that will cause it to paint your ship appropriately.
+
+There's just one problem: you don't have an emergency hull painting robot.
+
+You'll need to build a new emergency hull painting robot.
+The robot needs to be able to move around on the grid of square panels on the side of your ship,
+detect the color of its current panel, and paint its current panel black or white. (All of the panels are currently black.)
+
+The Intcode program will serve as the brain of the robot.
+The program uses input instructions to access the robot's camera:
+provide 0 if the robot is over a black panel or 1 if the robot is over a white panel. Then, the program will output two values:
+
+    First, it will output a value indicating the color to paint the panel the robot is over:
+        0 means to paint the panel black, and 1 means to paint the panel white.
+    Second, it will output a value indicating the direction the robot should turn:
+        0 means it should turn left 90 degrees, and 1 means it should turn right 90 degrees.
+
+After the robot turns, it should always move forward exactly one panel. The robot starts facing up.
+
+The robot will continue running for a while like this and halt when it is finished drawing.
+Do not restart the Intcode computer inside the robot during this process.
+
+For example, suppose the robot is about to start running.
+Drawing black panels as ., white panels as #, and the robot pointing the direction it is facing (< ^ > v),
+the initial state and region near the robot looks like this:
+
+.....
+.....
+..^..
+.....
+.....
+
+The panel under the robot (not visible here because a ^ is shown instead) is also black,
+and so any input instructions at this point should be provided 0.
+Suppose the robot eventually outputs 1 (paint white) and then 0 (turn left).
+After taking these actions and moving forward one panel, the region now looks like this:
+
+.....
+.....
+.<#..
+.....
+.....
+
+Input instructions should still be provided 0. Next, the robot might output 0 (paint black) and then 0 (turn left):
+
+.....
+.....
+..#..
+.v...
+.....
+
+After more outputs (1,0, 1,0):
+
+.....
+.....
+..^..
+.##..
+.....
+
+The robot is now back where it started, but because it is now on a white panel, input instructions should be provided 1.
+After several more outputs (0,1, 1,0, 1,0), the area looks like this:
+
+.....
+..<#.
+...#.
+.##..
+.....
+
+Before you deploy the robot, you should probably have an estimate of the area it will cover:
+specifically, you need to know the number of panels it paints at least once, regardless of color.
+In the example above, the robot painted 6 panels at least once.
+(It painted its starting panel twice, but that panel is still only counted once; it also never painted the panel it ended on.)
+
+Build a new emergency hull painting robot and run the Intcode program on it. How many panels does it paint at least once?
+
+--- Part Two ---
+
+You're not sure what it's trying to paint, but it's definitely not a registration identifier. The Space Police are getting impatient.
+
+Checking your external ship cameras again, you notice a white panel marked "emergency hull painting robot starting panel".
+The rest of the panels are still black, but it looks like the robot was expecting to start on a white panel, not a black one.
+
+Based on the Space Law Space Brochure that the Space Police attached to one of your windows,
+a valid registration identifier is always eight capital letters.
+After starting the robot on a single white panel instead, what registration identifier does it paint on your hull?
 
      */
 
     public class Day11 : DayBase
     {
-        public override object Part1()
-        {
-            var asteroids = Parse(Input);
-            return asteroids.Max(a => CountDistinctAngles(asteroids, a));
-        }
+        public override object Part1() => PaintPanels(new Dictionary<(int x, int y), int>()).Count;
 
         public override object Part2()
         {
-            var asteroids = Parse(Input);
-            var laser = asteroids.MaxBy(a => CountDistinctAngles(asteroids, a));
+            var panels = PaintPanels(new Dictionary<(int x, int y), int> { [(0, 0)] = 1 });
 
-            var directions = new Dictionary<double, LinkedList<(int dist2, int x, int y)>>();
-            foreach (var other in asteroids.Where(x => x != laser))
+            var limX = panels.Keys.MinMax(x => x.x);
+            var limY = panels.Keys.MinMax(x => x.y);
+            var sb = new StringBuilder("\n");
+
+            for (int y = limY.min; y <= limY.max; y++)
             {
-                int dx = other.x - laser.x, dy = -other.y + laser.y;
-                var angle = GetNormalizedAngle(dx, dy);
-                if (!directions.TryGetValue(angle, out var list))
-                    directions[angle] = list = new LinkedList<(int, int, int)>();
-                list.AddFirst((dx * dx + dy * dy, other.x, other.y));
+                for (int x = limX.min; x <= limX.max; x++)
+                {
+                    panels.TryGetValue((x, y), out var color);
+                    sb.Append(color == 1 ? '#' : ' ');
+                }
+
+                sb.Append('\n');
             }
 
-            var sortedDirections = directions.OrderBy(x => x.Key)
-                                             .Select(x => x.Value.OrderBy(d => d.dist2).ToLinkedList());
+            return sb.ToString();
+        }
 
-            int i = 0;
-            foreach (var candidates in sortedDirections.RepeatForever().Where(x => x.Count > 0))
+        private Dictionary<(int x, int y), int> PaintPanels(Dictionary<(int x, int y), int> panels)
+        {
+            var robot = new Intcode(Parse(Input));
+            var directions = new (int x, int y)[] { (0, -1), (1, 0), (0, 1), (-1, 0) };
+            var location = (x: 0, y: 0);
+            var iDirection = 0;
+
+            while (robot.State != Intcode.IntcodeState.Done)
             {
-                var removed = candidates.First();
-                candidates.RemoveFirst();
-                if (++i == 200)
-                    return removed.x * 100 + removed.y;
+                panels.TryGetValue(location, out int color);
+                robot.Input.Enqueue(color);
+                robot.Run();
+                panels[location] = (int)robot.Output.Dequeue();
+                iDirection = (iDirection + (robot.Output.Dequeue() == 1 ? 1 : -1) + 4) % 4;
+                location = (location.x + directions[iDirection].x, location.y + directions[iDirection].y);
             }
 
-            return -1;
+            return panels;
         }
 
-        private static double GetNormalizedAngle(int dx, int dy) => (Math.Atan2(dx, dy) + (2 * Math.PI)) % (2 * Math.PI);
-
-        private static int CountDistinctAngles(IEnumerable<(int x, int y)> asteroids, (int x, int y) asteroid)
-        {
-            return asteroids.Where(other => other != asteroid)
-                            .Select(other => GetNormalizedAngle(other.x - asteroid.x, -other.y + asteroid.y))
-                            .Distinct()
-                            .Count();
-        }
-
-        private static HashSet<(int x, int y)> Parse(string input)
-        {
-            return input.Split('\n')
-                        .Select((row, y) => row.Select((c, x) => (x, y, c))
-                                               .Where(x => x.c == '#')
-                                               .Select(x => (x.x, x.y)))
-                        .SelectMany(x => x)
-                        .ToHashSet();
-        }
+        private static IEnumerable<long> Parse(string input) => input.Split(',').Select(long.Parse);
 
         [Fact]
         public static void Test()
         {
             var day = Program.CreateInstance(11);
-            Assert.Equal(340, day.Part1());
-            Assert.Equal(2628, day.Part2());
+            Assert.Equal(1747, day.Part1());
+            Assert.Equal("\n ####  ##   ##  ###  #  # #  # #    ###    \n    # #  # #  # #  # #  # # #  #    #  #   \n   #  #    #    #  # #### ##   #    ###    \n  #   #    # ## ###  #  # # #  #    #  #   \n #    #  # #  # # #  #  # # #  #    #  #   \n ####  ##   ### #  # #  # #  # #### ###    \n", day.Part2());
         }
     }
 }
-
