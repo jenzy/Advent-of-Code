@@ -35,6 +35,16 @@ namespace AdventOfCode.Y2019.Common
             this.Output = new Queue<long>();
         }
 
+        private Intcode(Intcode other)
+        {
+            this.data = other.data.ToDictionary(x => x.Key, x => x.Value);
+            this.pc = other.pc;
+            this.rb = other.rb;
+            this.State = other.State;
+            this.Input = new Queue<long>();
+            this.Output = new Queue<long>();
+        }
+
         public IntcodeState State { get; private set; } = IntcodeState.Ready;
 
         public long SimpleOutput => data[0];
@@ -114,7 +124,15 @@ namespace AdventOfCode.Y2019.Common
             }
         }
 
-        private int GetArgPosition(int argNum)
+        public Intcode Clone() => new Intcode(this);
+
+        public Intcode WithInput(long input)
+        {
+            this.Input.Enqueue(input);
+            return this;
+        }
+
+         private int GetArgPosition(int argNum)
         {
             var mode = (ArgMode)(((int)CurrentOpcodeFull % (int)Math.Pow(10, argNum + 2)) / (int)Math.Pow(10, argNum + 1));
             switch (mode)

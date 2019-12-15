@@ -19,6 +19,12 @@ namespace AdventOfCode.Common
 
         public static LinkedList<T> ToLinkedList<T>(this IEnumerable<T> seq) => new LinkedList<T>(seq);
 
+        public static void EnqueueRange<T>(this Queue<T> queue, IEnumerable<T> seq)
+        {
+            foreach (var item in seq)
+                queue.Enqueue(item);
+        }
+
         public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector, IComparer<TKey> comparer = null)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
