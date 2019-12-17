@@ -1,4 +1,5 @@
 ﻿using AdventOfCode.Common;
+using AdventOfCode.Y2019.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,36 +17,98 @@ namespace AdventOfCode.Y2019.Days
     {
         public override object Part1()
         {
-            var data = Parse(Input);
+            var output = string.Join("", new Intcode(Parse(Input)).Run().Output.Select(x => (char)x));
 
-            for (int round = 1; round <= 100; round++)
+            Console.WriteLine("\n" + output);
+            
+            var grid = output.Split('\n')
+                             .SelectMany((yy, y) => yy
+                             .Select((xx, x) => (x, y, xx)))
+                             .Where(x => x.xx == '#')
+                             .ToDictionary(x => (x.x, x.y), x => x.xx);
+
+
+
+            int count = 0;
+            foreach(var kvp in grid.Keys)
             {
-                var newData = new int[data.Length];
-                Parallel.For(0, data.Length, i => newData[i] = Math.Abs(data.Zip(GetPattern(i + 1, data.Length), (d, p) => d * p).Sum()) % 10);
-                data = newData;
+                if (grid.ContainsKey((kvp.x - 1, kvp.y))
+                    && grid.ContainsKey((kvp.x + 1, kvp.y))
+                    && grid.ContainsKey((kvp.x, kvp.y - 1))
+                    && grid.ContainsKey((kvp.x, kvp.y - 1))
+                    )
+                    count += kvp.x * kvp.y;
             }
 
-            return string.Join(string.Empty, data.Take(8));
+            return count;
         }
 
         public override object Part2()
         {
-            var data = Parse(Input);
-            int offset = int.Parse(string.Join(string.Empty, data.Take(7)));
-            data = data.AsEnumerable().RepeatForever().Skip(offset).Take((10_000 * data.Length) - offset).ToArray();
-            if (offset <= data.Length / 2)
-                throw new Exception("offest not in second half");
+            var output = string.Join("", new Intcode(Parse(Input)).Run().Output.Select(x => (char)x));
 
-            for (int round = 0; round < 100; round++)
+            Console.WriteLine("\n" + output);
+
+            var grid = output.Split('\n').SelectMany((yy, y) => yy.Select((xx, x) => (x, y, xx)).ToDictionary(x => (x.x, x.y), x => x.xx));
+            var robotTmp = grid.Single(kvp => new[] { '^', 'v', '<', '>' }.Contains(kvp.Value));
+            var robotPos = (x: robotTmp.Key.x, y: robotTmp.Key.y);
+            var robotDir = robotTmp.Value;
+            var scaffold = grid.Where(kvp => kvp.Value == '#').Select(x => x.Key).ToHashSet();
+
+            int currentMove = 0;
+            var path = new List<string>();
+
+            while (true)
             {
-                for (int i = data.Length - 2; i >= 0; --i)
-                    data[i] = Math.Abs(data[i + 1] + data[i]) % 10;
+                var newPos = NewPosition(robotPos, robotDir);
+                if (scaffold.Contains(newPos))
+                {
+                    robotPos = newPos;
+                    currentMove++;
+                }
+                else
+                {
+                    if (currentMove > 0)
+                        path.Add(currentMove.ToString());
+                    currentMove = 0;
+
+                    var dirs = GetDirections(robotDir).Select((x, i) => (d: x, i));
+                    var dir = dirs.FirstOrDefault(d => scaffold.Contains(NewPosition(robotPos, d.d)));
+                    if (dir.d == default)
+                        break;
+
+                    robotDir = dir.d;
+                    var rot = dir.i == 0 ? "L" : "R";
+                    path.Add(rot);
+                }
             }
 
-            return string.Join(string.Empty, data.Take(8));
+
+
+            return string.Join(",", path);
         }
 
-        private static int[] Parse(string input) => input.Select(x => (int)(x - '0')).ToArray();
+        // R,6,L,10,R,8,R,8,R,12,L,8,L,10,R,6,L,10,R,8,R,8,R,12,L,10,R,6,L,10,R,12,L,8,L,10,R,12,L,10,R,6,L,10,R,6,L,10,R,8,R,8,R,12,L,8,L,10,R,6,L,10,R,8,R,8,R,12,L,10,R,6,L,10
+
+        private static (int x, int y) NewPosition((int x, int y) pos, char direction) => direction switch
+        {
+            '^' => (pos.x, pos.y - 1),
+            'v' => (pos.x, pos.y + 1),
+            '<' => (pos.x - 1, pos.y),
+            '>' => (pos.x + 1, pos.y),
+            _ => throw new ArgumentOutOfRangeException(nameof(direction))
+        };
+
+        private static char[] GetDirections(char direction) => direction switch
+        {
+            '^' => new[] { '<', '>' },
+            'v' => new[] { '>', '<' },
+            '<' => new[] { 'v', '^' },
+            '>' => new[] { '^', 'v' },
+            _ => throw new ArgumentOutOfRangeException(nameof(direction))
+        };
+
+        private static IEnumerable<long> Parse(string input) => input.Split(',').Select(long.Parse);
 
         private static IEnumerable<int> GetPattern(int round, int len)
         {
@@ -70,3 +133,58 @@ namespace AdventOfCode.Y2019.Days
         }
     }
 }
+
+/*
+ R,6,L,10,R,8,R,8,R,12,L,8,L,10,R,6,L,10,R,8,R,8,R,12,L,10,R,6,L,10,R,12,L,8,L,10,R,12,L,10,R,6,L,10,R,6,L,10,R,8,R,8,R,12,L,8,L,10,R,6,L,10,R,8,R,8,R,12,L,10,R,6,L,10
+
+R,6,L,2,R,8,L,8,L,8,L8,R4,
+L,8,L,10,R,6,L,2,R,8,L,8,L,8,R4
+L,10,R,6,L,10,R,12,L,8,L,10,R,12,L,10,R,6,L,10,R,6,
+L2,R,8,L,8,L,8,L,8,R,4
+L,8,L,10,R,6,
+L,10,R,8,R,8,R,12,L,10,R,6,L,10
+
+
+
+........................................#########...........#########........
+........................................#.......#...........#.......#........
+........................................#.......#...........#.......#........
+........................................#.......#...........#.......#........
+........................................#.......#...........#.......#........
+........................................#.......#...........#.......#........
+........................................#.......#...........#.......#........
+........................................#.......#...........#.......#........
+........................................#.......#.......#############........
+........................................#.......#.......#...#................
+#########...................#############.......#.....^######................
+#.......#...................#...................#.......#....................
+#.......#...................#...................###########..................
+#.......#...................#...........................#.#..................
+#.......#...................#...........................#.#..................
+#.......#...................#...........................#.#..................
+#.......#...................#...........................###########..........
+#.......#...................#.............................#.......#..........
+##########x.................#.............................###########........
+........#.#.................#.....................................#.#........
+........#.#...........#######.....................................#.#........
+........#.#...........#...........................................#.#........
+........###########...#...........................................###########
+..........#.......#...#.............................................#.......#
+..........###########.#.............................................#.......#
+..................#.#.#.............................................#.......#
+..................#.#.#.............................................#.......#
+..................#.#.#.............................................#.......#
+..................###########.......................................#.......#
+....................#.#.............................................#.......#
+................x######.............................................#########
+................#...#........................................................
+........#############........................................................
+........#.......#............................................................
+........#.......#............................................................
+........#.......#............................................................
+........#.......#............................................................
+........#.......#............................................................
+........#.......#............................................................
+........#.......#............................................................
+........#########............................................................
+ */
